@@ -13,8 +13,6 @@
   --accent: #e03c3c; --accent2: #f5a623; --green: #2ecc71; --radius: 12px;
 }
 body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; }
-
-/* 화면 전환 */
 .screen { width:100%; max-width:960px; display:none; }
 .screen.active { display:block; }
 #screen-room.active { display:flex; flex-direction:column; gap:16px; }
@@ -53,21 +51,21 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
 
 /* ── 게임 레이아웃 ── */
 .game-main { display:grid; grid-template-columns:1fr 320px; gap:16px; align-items:start; }
-@media(max-width:680px) { .game-main { grid-template-columns:1fr; } }
+@media(max-width:680px){ .game-main{ grid-template-columns:1fr; } }
 
 /* ── 다트판 ── */
 .board-area { display:flex; flex-direction:column; align-items:center; gap:18px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px; }
-.board-wrap { position:relative; width:280px; height:280px; }
-.board-wrap canvas { border-radius:50%; display:block; }
-.pointer-triangle { position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:18px solid var(--accent); z-index:10; filter:drop-shadow(0 2px 4px rgba(224,60,60,0.5)); }
-.center-dot { position:absolute; top:50%; left:50%; width:14px; height:14px; background:var(--accent); border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); z-index:10; }
+.board-wrap { position:relative; width:300px; height:300px; }
+.board-wrap canvas { border-radius:50%; display:block; box-shadow:0 0 0 4px rgba(255,255,255,0.06), 0 0 0 8px rgba(255,255,255,0.03); }
+.pointer-triangle { position:absolute; top:-2px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:20px solid #fff; z-index:10; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
+.center-dot { position:absolute; top:50%; left:50%; width:16px; height:16px; background:#fff; border:3px solid rgba(0,0,0,0.3); border-radius:50%; transform:translate(-50%,-50%); z-index:10; }
 .throw-status { font-size:13px; color:var(--muted); min-height:20px; text-align:center; }
 .throw-status.spinning { color:var(--accent2); }
 .btn-throw { padding:14px 48px; background:var(--accent); color:white; border:none; border-radius:50px; font-family:'Black Han Sans',sans-serif; font-size:20px; letter-spacing:2px; cursor:pointer; transition:background 0.15s,transform 0.1s; box-shadow:0 5px 0 #971a1a; }
 .btn-throw:hover { background:#e85555; }
 .btn-throw:active { transform:translateY(3px); box-shadow:0 2px 0 #971a1a; }
 .btn-throw:disabled { background:#333; color:#555; box-shadow:none; cursor:not-allowed; }
-.result-box { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px 20px; min-height:80px; text-align:center; width:100%; max-width:320px; transition:border-color 0.3s; }
+.result-box { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px 20px; min-height:80px; text-align:center; width:100%; max-width:340px; transition:border-color 0.3s; }
 .result-box.lit { border-color:var(--accent2); }
 .result-placeholder { color:var(--muted); font-size:13px; line-height:1.7; }
 .result-name { font-family:'Black Han Sans',sans-serif; font-size:28px; margin-bottom:4px; }
@@ -76,16 +74,14 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
 .result-tag { font-size:11px; padding:2px 8px; border-radius:12px; background:rgba(255,255,255,0.07); color:var(--muted); }
 .result-thrower { font-size:12px; color:var(--accent2); margin-bottom:8px; }
 
-/* ── 사이드 패널 (피드 / 편집 공유) ── */
+/* ── 사이드 패널 ── */
 .side-panel { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); display:flex; flex-direction:column; min-height:360px; overflow:hidden; }
 .side-tabs { display:flex; border-bottom:1px solid var(--border); }
 .side-tab { flex:1; padding:13px; font-size:13px; text-align:center; cursor:pointer; color:var(--muted); background:transparent; border:none; transition:color 0.15s,background 0.15s; }
 .side-tab.active { color:var(--text); background:var(--bg3); }
 .side-content { display:none; flex-direction:column; gap:10px; padding:16px; flex:1; }
 .side-content.active { display:flex; }
-
-/* 피드 */
-.feed-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; max-height:400px; }
+.feed-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; max-height:420px; }
 .feed-list::-webkit-scrollbar { width:4px; }
 .feed-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 .feed-item { background:var(--bg3); border-radius:8px; padding:10px 12px; font-size:13px; border-left:3px solid transparent; animation:slideIn 0.3s ease; }
@@ -95,9 +91,7 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
 .fi-dest { font-family:'Black Han Sans',sans-serif; font-size:16px; }
 .fi-time { font-size:11px; color:var(--muted); margin-top:2px; }
 .feed-empty { color:var(--muted); font-size:13px; text-align:center; margin-top:20px; line-height:1.7; }
-
-/* ── 편집 패널 ── */
-.dest-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:340px; }
+.dest-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:300px; }
 .dest-list::-webkit-scrollbar { width:4px; }
 .dest-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 .dest-item { display:flex; align-items:center; gap:10px; background:var(--bg3); border-radius:8px; padding:10px 12px; font-size:14px; }
@@ -106,30 +100,21 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
 .dest-item .dest-del { background:transparent; border:none; color:var(--muted); font-size:16px; cursor:pointer; padding:2px 6px; border-radius:4px; transition:color 0.15s,background 0.15s; flex-shrink:0; }
 .dest-item .dest-del:hover { color:#ff6b6b; background:rgba(255,107,107,0.1); }
 .dest-count { font-size:12px; color:var(--muted); }
-
-/* 추가 폼 */
 .add-form { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; }
 .add-form label { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
 .form-row { display:grid; grid-template-columns:64px 1fr; gap:8px; }
-.add-form input, .add-form textarea {
-  background:var(--bg2); border:1px solid var(--border); border-radius:6px;
-  color:var(--text); font-family:'Nanum Gothic',sans-serif; font-size:13px;
-  padding:8px 10px; outline:none; transition:border-color 0.2s; width:100%;
-}
-.add-form input:focus, .add-form textarea:focus { border-color:var(--accent); }
-.add-form input::placeholder, .add-form textarea::placeholder { color:var(--muted); }
+.add-form input,.add-form textarea { background:var(--bg2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'Nanum Gothic',sans-serif; font-size:13px; padding:8px 10px; outline:none; transition:border-color 0.2s; width:100%; }
+.add-form input:focus,.add-form textarea:focus { border-color:var(--accent); }
+.add-form input::placeholder,.add-form textarea::placeholder { color:var(--muted); }
 .add-form textarea { resize:none; height:54px; }
 .btn-add { padding:9px; background:var(--accent); color:white; border:none; border-radius:6px; font-family:'Black Han Sans',sans-serif; font-size:13px; cursor:pointer; transition:background 0.15s; }
 .btn-add:hover { background:#e85555; }
-.btn-reset { padding:8px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); font-size:12px; cursor:pointer; transition:color 0.15s; }
+.btn-reset { padding:8px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); font-size:12px; cursor:pointer; }
 .btn-reset:hover { color:#ff6b6b; border-color:rgba(255,107,107,0.3); }
-.edit-actions { display:flex; gap:8px; }
-.edit-actions button { flex:1; }
 </style>
 </head>
 <body>
 
-<!-- 참여 화면 -->
 <div id="screen-join" class="screen active">
   <div class="join-logo">🎯</div>
   <p class="join-sub">다트 던져서 국내 여행지 뽑기<br>친구들이랑 같이!</p>
@@ -145,7 +130,6 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
-<!-- 게임 화면 -->
 <div id="screen-room" class="screen">
   <div class="room-header">
     <div class="room-code-wrap">
@@ -155,13 +139,11 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
     </div>
     <div class="participants" id="participants-list"></div>
   </div>
-
   <div class="game-main">
-    <!-- 다트판 -->
     <div class="board-area">
       <div class="board-wrap">
         <div class="pointer-triangle"></div>
-        <canvas id="wheel" width="280" height="280"></canvas>
+        <canvas id="wheel" width="300" height="300"></canvas>
         <div class="center-dot"></div>
       </div>
       <p class="throw-status" id="status-msg">다트를 던져봐!</p>
@@ -170,33 +152,22 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
         <p class="result-placeholder">아직 결과 없음.<br>다트를 던져보자!</p>
       </div>
     </div>
-
-    <!-- 사이드 패널 -->
     <div class="side-panel">
       <div class="side-tabs">
         <button class="side-tab active" onclick="switchTab('feed')">📌 결과 피드</button>
         <button class="side-tab" onclick="switchTab('edit')">✏️ 여행지 편집</button>
       </div>
-
-      <!-- 피드 탭 -->
       <div class="side-content active" id="tab-feed">
         <div class="feed-list" id="feed-list">
           <p class="feed-empty">아직 아무도 안 던졌어!<br>첫 다트를 날려봐 🎯</p>
         </div>
       </div>
-
-      <!-- 편집 탭 -->
       <div class="side-content" id="tab-edit">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <span class="dest-count" id="dest-count">0개</span>
-          <div class="edit-actions" style="width:auto;gap:6px;">
-            <button class="btn-reset" onclick="resetDefaults()">기본값으로</button>
-          </div>
+          <button class="btn-reset" onclick="resetDefaults()">기본값으로</button>
         </div>
-
         <div class="dest-list" id="dest-list"></div>
-
-        <!-- 추가 폼 -->
         <div class="add-form">
           <label>여행지 추가</label>
           <div class="form-row">
@@ -204,7 +175,7 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
             <input id="new-name" placeholder="여행지 이름" maxlength="12">
           </div>
           <textarea id="new-desc" placeholder="짧은 설명 (선택)"></textarea>
-          <input id="new-tags" placeholder="태그: 바다, 맛집, 자연 (쉼표로 구분, 선택)">
+          <input id="new-tags" placeholder="태그: 바다, 맛집 (쉼표 구분, 선택)">
           <button class="btn-add" onclick="addDestination()">+ 추가하기</button>
         </div>
       </div>
@@ -219,37 +190,50 @@ body { font-family:'Nanum Gothic',sans-serif; background:var(--bg); color:var(--
    🔧 Firebase 설정 — 여기만 수정!
 ══════════════════════════════════════ */
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyA3cVODaqtDxHPD0P2CDijTaNrvzTgIPc4",
-  authDomain:        "girls-night-d1269.firebaseapp.com",
-  databaseURL:       "https://girls-night-d1269-default-rtdb.firebaseio.com",
-  projectId:         "girls-night-d1269",
-  storageBucket:     "girls-night-d1269.firebasestorage.app",
-  messagingSenderId: "3708739778",
-  appId:             "1:3708739778:web:6f0f5ed9905ed2ef8b9b5b"
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL:       "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
 };
 
 /* ══════════════════════════════════════
-   기본 여행지 목록 (방 처음 만들 때 사용)
+   🎨 돌림판 컬러 팔레트 — 뮤트 톤
+   (원색 없이 채도 낮춘 세련된 조합)
 ══════════════════════════════════════ */
-const DEFAULT_DESTINATIONS = [
-  { name:'제주도', emoji:'🌊', desc:'에메랄드 바다, 한라산, 흑돼지!', tags:['자연','해수욕','맛집'] },
-  { name:'부산',   emoji:'🌆', desc:'해운대, 광안리, 감천마을!',       tags:['해변','야경','해산물'] },
-  { name:'경주',   emoji:'🏛️', desc:'천년 신라의 역사. 불국사, 첨성대.',tags:['역사','문화','야경'] },
-  { name:'강릉',   emoji:'☕', desc:'정동진 일출, 경포대, 커피거리!',  tags:['바다','카페','일출'] },
-  { name:'전주',   emoji:'🏮', desc:'한옥마을, 비빔밥, 막걸리골목!',   tags:['한옥','먹거리','전통'] },
-  { name:'여수',   emoji:'🌅', desc:'낭만 항구! 밤바다 야경.',          tags:['야경','해산물','드라이브'] },
-  { name:'통영',   emoji:'⛵', desc:'다도해 풍경과 굴, 꿀빵!',          tags:['해양','역사','굴'] },
-  { name:'속초',   emoji:'🏔️', desc:'설악산과 동해바다! 닭강정 필수.',  tags:['산','바다','닭강정'] },
-  { name:'안동',   emoji:'🥢', desc:'하회마을과 찜닭의 고장!',          tags:['문화재','찜닭','하회탈'] },
-  { name:'춘천',   emoji:'🦆', desc:'닭갈비의 성지, 의암호, 남이섬!',  tags:['닭갈비','호수','남이섬'] },
-  { name:'담양',   emoji:'🎋', desc:'대나무 숲, 메타세쿼이아길!',       tags:['자연','대나무','떡갈비'] },
-  { name:'남해',   emoji:'🌿', desc:'독일마을, 다랭이논, 한려해상.',    tags:['드라이브','힐링','멸치'] },
+const PALETTE = [
+  '#C17B7B', // 더스티 로즈
+  '#C49A6C', // 웜 카라멜
+  '#B8A86E', // 머스타드 베이지
+  '#7EA87E', // 세이지 그린
+  '#5FA8A0', // 뮤트 틸
+  '#6A8FAF', // 스틸 블루
+  '#8A7BAF', // 더스티 퍼플
+  '#AF7BA0', // 모브
+  '#AF7B7B', // 로즈 모브
+  '#7BA88A', // 올리브 민트
+  '#9A8070', // 웜 토프
+  '#7B9AAF', // 슬레이트 블루
 ];
 
-const PALETTE = [
-  '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c',
-  '#3498db','#9b59b6','#e91e63','#00bcd4','#8bc34a','#ff5722','#607d8b',
-  '#16a085','#8e44ad','#d35400','#27ae60','#2980b9','#c0392b',
+/* ══════════════════════════════════════
+   기본 여행지 목록
+══════════════════════════════════════ */
+const DEFAULT_DESTINATIONS = [
+  { name:'제주도', emoji:'🌊', desc:'에메랄드 바다, 한라산, 흑돼지! 사계절 언제나 좋아.', tags:['자연','해수욕','맛집'] },
+  { name:'부산',   emoji:'🌆', desc:'해운대, 광안리, 감천마을! 도시와 바다의 조화.', tags:['해변','야경','해산물'] },
+  { name:'경주',   emoji:'🏛️', desc:'천년 신라의 역사. 불국사, 첨성대, 황리단길.', tags:['역사','문화','야경'] },
+  { name:'강릉',   emoji:'☕', desc:'정동진 일출, 경포대, 커피거리! 동해 감성.', tags:['바다','카페','일출'] },
+  { name:'전주',   emoji:'🏮', desc:'한옥마을, 비빔밥, 막걸리골목! 전통 가득.', tags:['한옥','먹거리','전통'] },
+  { name:'여수',   emoji:'🌅', desc:'낭만 항구! 밤바다 야경과 갓김치, 돌산대교.', tags:['야경','해산물','드라이브'] },
+  { name:'통영',   emoji:'⛵', desc:'한국의 나폴리! 다도해 뷰와 굴, 꿀빵.', tags:['해양','역사','굴'] },
+  { name:'속초',   emoji:'🏔️', desc:'설악산과 동해를 동시에! 닭강정 필수 코스.', tags:['산','바다','닭강정'] },
+  { name:'안동',   emoji:'🥢', desc:'하회마을, 안동찜닭, 간고등어! 느린 여행.', tags:['문화재','찜닭','하회탈'] },
+  { name:'춘천',   emoji:'🦆', desc:'닭갈비 성지, 남이섬, 의암호! 기차 여행 감성.', tags:['닭갈비','호수','남이섬'] },
+  { name:'담양',   emoji:'🎋', desc:'메타세쿼이아길, 대나무 숲, 떡갈비!', tags:['자연','대나무','떡갈비'] },
+  { name:'남해',   emoji:'🌿', desc:'독일마을, 다랭이논, 멸치쌈밥! 숨겨진 보석.', tags:['드라이브','힐링','멸치'] },
 ];
 
 /* ══════════════════════════════════════
@@ -257,10 +241,8 @@ const PALETTE = [
 ══════════════════════════════════════ */
 let db, roomRef, participantsRef, throwRef, historyRef, destRef;
 let destinations = [...DEFAULT_DESTINATIONS];
-let currentAngle = 0;
-let spinning = false;
-let myNickname = '', myRoomId = '';
-let lastThrowId = null;
+let currentAngle = 0, spinning = false;
+let myNickname = '', myRoomId = '', lastThrowId = null;
 const USER_ID = 'u_' + Math.random().toString(36).slice(2, 10);
 
 try {
@@ -276,14 +258,11 @@ try {
 function generateCode() {
   return Array.from({length:4}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 }
-
 async function createRoom() {
   const nick = document.getElementById('input-nick').value.trim();
   if (!nick) { alert('닉네임을 입력해줘!'); return; }
-  const code = generateCode();
-  await enterRoom(code, nick, true);
+  await enterRoom(generateCode(), nick, true);
 }
-
 async function joinRoom() {
   const nick = document.getElementById('input-nick').value.trim();
   const code = document.getElementById('input-code').value.trim().toUpperCase();
@@ -295,29 +274,20 @@ async function joinRoom() {
   err.style.display='none';
   await enterRoom(code, nick, false);
 }
-
 async function enterRoom(code, nick, isNew) {
   myRoomId = code; myNickname = nick;
-  roomRef       = db.ref(`rooms/${code}`);
   participantsRef = db.ref(`rooms/${code}/participants`);
-  throwRef      = db.ref(`rooms/${code}/lastThrow`);
-  historyRef    = db.ref(`rooms/${code}/history`);
-  destRef       = db.ref(`rooms/${code}/destinations`);
-
+  throwRef        = db.ref(`rooms/${code}/lastThrow`);
+  historyRef      = db.ref(`rooms/${code}/history`);
+  destRef         = db.ref(`rooms/${code}/destinations`);
   const myRef = participantsRef.child(USER_ID);
   await myRef.set({ nickname: nick, joinedAt: Date.now() });
   myRef.onDisconnect().remove();
-
-  // 새 방이면 기본 여행지 저장
-  if (isNew) {
-    await destRef.set(DEFAULT_DESTINATIONS.map(d => ({ ...d, tags: d.tags.join(',') })));
-  }
-
+  if (isNew) await destRef.set(DEFAULT_DESTINATIONS.map(d => ({ ...d, tags: d.tags.join(',') })));
   participantsRef.on('value', onParticipantsUpdate);
   throwRef.on('value', onThrowUpdate);
   historyRef.limitToLast(30).on('value', onHistoryUpdate);
   destRef.on('value', onDestinationsUpdate);
-
   document.getElementById('display-code').textContent = code;
   document.getElementById('screen-join').classList.remove('active');
   document.getElementById('screen-room').classList.add('active');
@@ -337,14 +307,12 @@ function onParticipantsUpdate(snap) {
     list.appendChild(chip);
   });
 }
-
 function onThrowUpdate(snap) {
   const data = snap.val();
   if (!data || data.throwId === lastThrowId) return;
   lastThrowId = data.throwId;
   animateTo(data.idx, data.thrower);
 }
-
 function onHistoryUpdate(snap) {
   const data = snap.val();
   const list = document.getElementById('feed-list');
@@ -360,14 +328,11 @@ function onHistoryUpdate(snap) {
     list.appendChild(el);
   });
 }
-
 function onDestinationsUpdate(snap) {
   const data = snap.val();
   if (!data) return;
-  // Firebase에서 배열 또는 객체로 올 수 있음
   destinations = (Array.isArray(data) ? data : Object.values(data)).map(d => ({
-    ...d,
-    tags: typeof d.tags === 'string' ? d.tags.split(',').map(t=>t.trim()).filter(Boolean) : (d.tags || [])
+    ...d, tags: typeof d.tags === 'string' ? d.tags.split(',').map(t=>t.trim()).filter(Boolean) : (d.tags||[])
   }));
   drawWheel(currentAngle);
   renderDestList();
@@ -378,67 +343,50 @@ function onDestinationsUpdate(snap) {
 ══════════════════════════════════════ */
 function renderDestList() {
   const list = document.getElementById('dest-list');
-  const count = document.getElementById('dest-count');
-  count.textContent = `${destinations.length}개`;
+  document.getElementById('dest-count').textContent = `${destinations.length}개`;
   list.innerHTML = '';
   destinations.forEach((d, i) => {
     const el = document.createElement('div');
     el.className = 'dest-item';
-    el.innerHTML = `<span class="dest-emoji">${d.emoji || '📍'}</span>
+    el.innerHTML = `<span class="dest-emoji">${d.emoji||'📍'}</span>
       <span class="dest-name">${d.name}</span>
-      <button class="dest-del" onclick="removeDestination(${i})" title="삭제">✕</button>`;
+      <button class="dest-del" onclick="removeDestination(${i})">✕</button>`;
     list.appendChild(el);
   });
 }
-
 function addDestination() {
   const emoji = document.getElementById('new-emoji').value.trim() || '📍';
   const name  = document.getElementById('new-name').value.trim();
   const desc  = document.getElementById('new-desc').value.trim();
   const tags  = document.getElementById('new-tags').value.trim();
-
   if (!name) { alert('여행지 이름을 입력해줘!'); return; }
-
-  const newDest = {
-    name, emoji, desc,
-    tags: tags.split(',').map(t=>t.trim()).filter(Boolean).join(',')
-  };
-
-  const updated = [...destinations.map(d => ({ ...d, tags: (d.tags||[]).join(',') })), newDest];
+  const updated = [...destinations.map(d=>({...d, tags:(d.tags||[]).join(',')})),
+    { name, emoji, desc, tags: tags.split(',').map(t=>t.trim()).filter(Boolean).join(',') }];
   destRef.set(updated).then(() => {
-    document.getElementById('new-emoji').value = '';
-    document.getElementById('new-name').value  = '';
-    document.getElementById('new-desc').value  = '';
-    document.getElementById('new-tags').value  = '';
+    ['new-emoji','new-name','new-desc','new-tags'].forEach(id => document.getElementById(id).value='');
   });
 }
-
 function removeDestination(idx) {
   if (destinations.length <= 2) { alert('최소 2개는 있어야 해!'); return; }
   if (!confirm(`"${destinations[idx].name}" 삭제할까?`)) return;
-  const updated = destinations
-    .filter((_, i) => i !== idx)
-    .map(d => ({ ...d, tags: (d.tags||[]).join(',') }));
-  destRef.set(updated);
+  destRef.set(destinations.filter((_,i)=>i!==idx).map(d=>({...d,tags:(d.tags||[]).join(',')})));
 }
-
 function resetDefaults() {
-  if (!confirm('기본 여행지 12개로 초기화할까? 현재 목록은 사라져.')) return;
-  destRef.set(DEFAULT_DESTINATIONS.map(d => ({ ...d, tags: d.tags.join(',') })));
+  if (!confirm('기본 여행지 12개로 초기화할까?')) return;
+  destRef.set(DEFAULT_DESTINATIONS.map(d=>({...d,tags:d.tags.join(',')})));
 }
 
 /* ══════════════════════════════════════
    다트 던지기
 ══════════════════════════════════════ */
 function throwDart() {
-  if (spinning || destinations.length === 0) return;
+  if (spinning || !destinations.length) return;
   const idx = Math.floor(Math.random() * destinations.length);
-  const dest = destinations[idx];
   const throwId = Date.now() + '_' + USER_ID;
   const histKey = historyRef.push().key;
   db.ref(`rooms/${myRoomId}`).update({
     lastThrow: { idx, thrower: myNickname, throwId, timestamp: Date.now() },
-    [`history/${histKey}`]: { idx, destName: dest.name, thrower: myNickname, timestamp: Date.now() }
+    [`history/${histKey}`]: { idx, destName: destinations[idx].name, thrower: myNickname, timestamp: Date.now() }
   });
 }
 
@@ -448,12 +396,10 @@ function throwDart() {
 function animateTo(targetIdx, throwerName) {
   if (spinning) return;
   spinning = true;
-  const btn = document.getElementById('btn-throw');
+  document.getElementById('btn-throw').disabled = true;
   const status = document.getElementById('status-msg');
-  btn.disabled = true;
   status.textContent = `${throwerName}이(가) 던지는 중... 🎯`;
   status.className = 'throw-status spinning';
-
   const N = destinations.length;
   const ARC = (2 * Math.PI) / N;
   let targetAngle = -Math.PI / 2 - (targetIdx + 0.5) * ARC;
@@ -462,10 +408,8 @@ function animateTo(targetIdx, throwerName) {
   if (delta === 0) delta = 2 * Math.PI;
   targetAngle = currentAngle + delta;
   while (targetAngle - currentAngle < minSpin) targetAngle += 2 * Math.PI;
-
   const duration = 3800, startAngle = currentAngle, startTime = performance.now();
-  const easeOut = t => 1 - Math.pow(1 - t, 4);
-
+  const easeOut = t => 1 - Math.pow(1-t, 4);
   function frame(now) {
     const t = Math.min((now - startTime) / duration, 1);
     currentAngle = startAngle + (targetAngle - startAngle) * easeOut(t);
@@ -473,7 +417,7 @@ function animateTo(targetIdx, throwerName) {
     if (t < 1) { requestAnimationFrame(frame); return; }
     currentAngle = currentAngle % (2 * Math.PI);
     spinning = false;
-    btn.disabled = false;
+    document.getElementById('btn-throw').disabled = false;
     status.textContent = '다트를 던져봐!';
     status.className = 'throw-status';
     showResult(targetIdx, throwerName);
@@ -482,7 +426,7 @@ function animateTo(targetIdx, throwerName) {
 }
 
 /* ══════════════════════════════════════
-   바퀴 그리기
+   🎨 바퀴 그리기 — 뮤트 톤 + 가독성 개선
 ══════════════════════════════════════ */
 function drawWheel(angle) {
   const canvas = document.getElementById('wheel');
@@ -493,28 +437,58 @@ function drawWheel(angle) {
   if (N === 0) { ctx.clearRect(0,0,W,W); return; }
   const ARC = (2 * Math.PI) / N;
   ctx.clearRect(0, 0, W, W);
+
   destinations.forEach((dest, i) => {
     const start = angle + i * ARC, end = start + ARC;
+
+    // 섹션 채우기
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, r, start, end);
     ctx.closePath();
     ctx.fillStyle = PALETTE[i % PALETTE.length];
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-    ctx.lineWidth = 1;
+
+    // 경계선 — 흰색 얇게
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
+
+    // 텍스트 영역: 바깥쪽 호 따라 배치
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(start + ARC / 2);
+
+    // 텍스트 배경 바 (반투명 어두운 띠 → 가독성 확보)
+    const textX = r - 14;
+    const barW = r * 0.52;
+    const barH = 20;
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.beginPath();
+    ctx.roundRect(textX - barW, -barH/2, barW, barH, 4);
+    ctx.fill();
+
+    // 이름 텍스트
     ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 13px "Nanum Gothic", sans-serif';
-    ctx.shadowColor = 'rgba(0,0,0,0.4)';
-    ctx.shadowBlur = 4;
-    ctx.fillText((dest.emoji || '') + ' ' + dest.name, r - 8, 5);
+    ctx.shadowColor = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 1;
+    ctx.fillText(dest.name, textX, 5);
+
     ctx.restore();
   });
+
+  // 중앙 원 (덮어씌우기)
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+  ctx.fillStyle = '#1e1e2a';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
 }
 
 function showResult(idx, thrower) {
@@ -524,33 +498,26 @@ function showResult(idx, thrower) {
   box.className = 'result-box lit';
   box.innerHTML = `
     <div class="result-thrower">${thrower}의 결과</div>
-    <div class="result-name">${dest.emoji || '📍'} ${dest.name}</div>
+    <div class="result-name">${dest.emoji||'📍'} ${dest.name}</div>
     ${dest.desc ? `<div class="result-desc">${dest.desc}</div>` : ''}
-    ${dest.tags && dest.tags.length ? `<div class="result-tags">${dest.tags.map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>` : ''}
+    ${dest.tags&&dest.tags.length ? `<div class="result-tags">${dest.tags.map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>` : ''}
   `;
 }
 
-/* ══════════════════════════════════════
-   탭 전환 / 유틸
-══════════════════════════════════════ */
+/* ── 탭 / 유틸 ── */
 function switchTab(tab) {
   document.querySelectorAll('.side-tab').forEach((el,i) => el.classList.toggle('active', (tab==='feed'&&i===0)||(tab==='edit'&&i===1)));
   document.getElementById('tab-feed').classList.toggle('active', tab==='feed');
   document.getElementById('tab-edit').classList.toggle('active', tab==='edit');
 }
-
 function copyCode() {
   navigator.clipboard.writeText(myRoomId).then(() => {
     const btn = document.querySelector('.copy-btn');
     btn.textContent = '복사됨!';
-    setTimeout(() => btn.textContent = '복사', 1500);
+    setTimeout(()=>btn.textContent='복사', 1500);
   });
 }
-
-document.getElementById('input-code').addEventListener('input', function() {
-  this.value = this.value.toUpperCase();
-});
-
+document.getElementById('input-code').addEventListener('input', function(){ this.value = this.value.toUpperCase(); });
 window.addEventListener('load', () => drawWheel(0));
 </script>
 </body>
