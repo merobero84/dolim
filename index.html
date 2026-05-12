@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 여행지 다트 — 실시간 멀티</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   기본 설정
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0e0e14;
+  --bg2: #16161f;
+  --bg3: #1e1e2a;
+  --border: rgba(255,255,255,0.08);
+  --text: #e8e8f0;
+  --muted: #8888a8;
+  --accent: #e03c3c;
+  --accent2: #f5a623;
+  --green: #2ecc71;
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Nanum Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* ═══════════════════════════════════════
+   화면 전환
+═══════════════════════════════════════ */
+.screen { width: 100%; max-width: 900px; display: none; }
+.screen.active { display: block; }
+
+/* ═══════════════════════════════════════
+   참여 화면
+═══════════════════════════════════════ */
+#screen-join {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.join-logo {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.join-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 36px;
+}
+
+.join-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.join-card label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.join-card input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.join-card input:focus { border-color: var(--accent); }
+.join-card input::placeholder { color: var(--muted); }
+
+.join-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.join-divider span { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.join-divider::before, .join-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 17px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 4px 0 #971a1a;
+}
+.btn-primary:hover { background: #e85555; }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 #971a1a; }
+.btn-primary:disabled { background: #444; box-shadow: none; cursor: not-allowed; }
+
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+.err-msg {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 12px;
+  display: none;
+}
+
+/* ═══════════════════════════════════════
+   게임 화면
+═══════════════════════════════════════ */
+#screen-room {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+}
+#screen-room.active { display: flex; }
+
+/* 상단 헤더 */
+.room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+}
+
+.room-code-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.room-code-label { font-size: 12px; color: var(--muted); }
+.room-code {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--accent2);
+}
+.copy-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.copy-btn:hover { color: var(--text); }
+
+.participants {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.participant-chip {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.participant-chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.participant-chip.me { border-color: rgba(224,60,60,0.4); color: #ff9090; }
+
+/* 메인 게임 영역 */
+.game-main {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .game-main { grid-template-columns: 1fr; }
+}
+
+/* 다트판 영역 */
+.board-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+}
+
+.board-wrap {
+  position: relative;
+  width: 280px;
+  height: 280px;
+}
+.board-wrap canvas { border-radius: 50%; display: block; }
+
+.pointer-triangle {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 18px solid var(--accent);
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(224,60,60,0.5));
+}
+.center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.throw-status {
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 20px;
+  text-align: center;
+}
+.throw-status.spinning { color: var(--accent2); }
+
+.btn-throw {
+  padding: 14px 48px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  box-shadow: 0 5px 0 #971a1a;
+}
+.btn-throw:hover { background: #e85555; }
+.btn-throw:active { transform: translateY(3px); box-shadow: 0 2px 0 #971a1a; }
+.btn-throw:disabled { background: #333; color: #555; box-shadow: none; cursor: not-allowed; }
+
+/* 결과 카드 */
+.result-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  min-height: 80px;
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  transition: border-color 0.3s;
+}
+.result-box.lit { border-color: var(--accent2); }
+.result-placeholder { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.result-name { font-family: 'Black Han Sans', sans-serif; font-size: 28px; margin-bottom: 4px; }
+.result-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+.result-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.result-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.07);
+  color: var(--muted);
+}
+.result-thrower { font-size: 12px; color: var(--accent2); margin-bottom: 8px; }
+
+/* 사이드 피드 */
+.feed-area {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 300px;
+}
+.feed-title { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+.feed-list::-webkit-scrollbar { width: 4px; }
+.feed-list::-webkit-scrollbar-track { background: transparent; }
+.feed-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.feed-item {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+  animation: slideIn 0.3s ease;
+}
+.feed-item.new { border-left-color: var(--accent2); }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.feed-item .fi-who { color: var(--accent2); font-weight: 700; margin-bottom: 2px; }
+.feed-item .fi-dest { font-family: 'Black Han Sans', sans-serif; font-size: 16px; }
+.feed-item .fi-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.feed-empty { color: var(--muted); font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+  화면 1: 방 참여/생성
+════════════════════════════════════ -->
+<div id="screen-join" class="screen active">
+  <div class="join-logo">🎯</div>
+  <p class="join-sub">다트 던져서 국내 여행지 뽑기<br>친구들이랑 같이!</p>
+
+  <div class="join-card">
+    <label>닉네임</label>
+    <input id="input-nick" type="text" maxlength="12" placeholder="예: 메로" autocomplete="off">
+
+    <label>방 코드로 참여</label>
+    <input id="input-code" type="text" maxlength="4" placeholder="4자리 코드 입력 (예: AB3K)" autocomplete="off"
+      style="text-transform:uppercase; letter-spacing: 4px; font-family: monospace;">
+    <p class="err-msg" id="err-msg">방을 찾을 수 없어요. 코드를 다시 확인해봐!</p>
+    <button class="btn-primary" onclick="joinRoom()">🚪 참여하기</button>
+
+    <div class="join-divider"><span>또는</span></div>
+
+    <button class="btn-secondary" onclick="createRoom()">✨ 새 방 만들기</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+  화면 2: 게임 방
+════════════════════════════════════ -->
+<div id="screen-room" class="screen">
+  <div class="room-header">
+    <div class="room-code-wrap">
+      <span class="room-code-label">방 코드</span>
+      <span class="room-code" id="display-code">----</span>
+      <button class="copy-btn" onclick="copyCode()">복사</button>
+    </div>
+    <div class="participants" id="participants-list"></div>
+  </div>
+
+  <div class="game-main">
+    <!-- 다트판 -->
+    <div class="board-area">
+      <div class="board-wrap">
+        <div class="pointer-triangle"></div>
+        <canvas id="wheel" width="280" height="280"></canvas>
+        <div class="center-dot"></div>
+      </div>
+      <p class="throw-status" id="status-msg">다트를 던져봐!</p>
+      <button class="btn-throw" id="btn-throw" onclick="throwDart()">🎯 던져!</button>
+      <div class="result-box" id="result-box">
+        <p class="result-placeholder">아직 결과 없음.<br>다트를 던져서 여행지를 뽑아보자!</p>
+      </div>
+    </div>
+
+    <!-- 결과 피드 -->
+    <div class="feed-area">
+      <p class="feed-title">📌 결과 피드</p>
+      <div class="feed-list" id="feed-list">
+        <p class="feed-empty" id="feed-empty">아직 아무도 던지지 않았어.<br>첫 번째 다트를 날려봐! 🎯</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════
+   🔧 Firebase 설정 — 여기만 수정하면 돼!
+
+   Firebase 콘솔 → 프로젝트 설정 → 앱 추가(웹) → 아래 값들 복사
+   Realtime Database 탭에서 데이터베이스 만들기 필수!
+══════════════════════════════════════════════ */
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyA3cVODaqtDxHPD0P2CDijTaNrvzTgIPc4",
+  authDomain:        "girls-night-d1269.firebaseapp.com",
+  projectId:         "girls-night-d1269",
+  storageBucket:     "girls-night-d1269.firebasestorage.app",
+  messagingSenderId: "3708739778",
+  appId:             "1:3708739778:web:6f0f5ed9905ed2ef8b9b5b",
+  databaseURL:       "https://girls-night-d1269-default-rtdb.firebaseio.com"
+};
+
+/* Firebase Realtime Database 보안 규칙 (콘솔에서 설정):
+{
+  "rules": {
+    "rooms": {
+      "$roomId": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}
+*/
+
+/* ══════════════════════════════════════════════
+   여행지 데이터
+══════════════════════════════════════════════ */
+const DESTINATIONS = [
+  { name:'제주도', emoji:'🌊', desc:'에메랄드 바다, 한라산, 흑돼지!', tags:['자연','해수욕','맛집'] },
+  { name:'부산',   emoji:'🌆', desc:'해운대, 광안리, 감천마을! 항구도시의 매력.', tags:['해변','야경','해산물'] },
+  { name:'경주',   emoji:'🏛️', desc:'천년 신라의 역사. 불국사, 첨성대.', tags:['역사','문화','야경'] },
+  { name:'강릉',   emoji:'☕', desc:'정동진 일출, 경포대, 커피거리!', tags:['바다','카페','일출'] },
+  { name:'전주',   emoji:'🏮', desc:'한옥마을, 비빔밥, 막걸리골목!', tags:['한옥','먹거리','전통'] },
+  { name:'여수',   emoji:'🌅', desc:'낭만 항구! 밤바다 야경과 돌산갓김치.', tags:['야경','해산물','드라이브'] },
+  { name:'통영',   emoji:'⛵', desc:'다도해 풍경과 굴, 꿀빵이 유명해.', tags:['해양','역사','굴'] },
+  { name:'속초',   emoji:'🏔️', desc:'설악산과 동해바다! 닭강정은 필수.', tags:['산','바다','닭강정'] },
+  { name:'안동',   emoji:'🥢', desc:'하회마을과 찜닭의 고장!', tags:['문화재','찜닭','하회탈'] },
+  { name:'춘천',   emoji:'🦆', desc:'닭갈비의 성지, 의암호, 남이섬!', tags:['닭갈비','호수','남이섬'] },
+  { name:'담양',   emoji:'🎋', desc:'대나무 숲, 메타세쿼이아길, 떡갈비!', tags:['자연','대나무','떡갈비'] },
+  { name:'남해',   emoji:'🌿', desc:'독일마을, 다랭이논! 한려해상 절경.', tags:['드라이브','힐링','멸치'] },
+];
+
+const PALETTE = [
+  '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c',
+  '#3498db','#9b59b6','#e91e63','#00bcd4','#8bc34a',
+  '#ff5722','#607d8b'
+];
+
+/* ══════════════════════════════════════════════
+   앱 상태
+══════════════════════════════════════════════ */
+const N = DESTINATIONS.length;
+const ARC = (2 * Math.PI) / N;
+const USER_ID = 'u_' + Math.random().toString(36).slice(2, 10);
+
+let db, roomRef, participantsRef, throwRef, historyRef;
+let currentAngle = 0;
+let spinning = false;
+let myNickname = '';
+let myRoomId = '';
+let lastThrowId = null;
+
+/* ══════════════════════════════════════════════
+   Firebase 초기화
+══════════════════════════════════════════════ */
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.database();
+} catch(e) {
+  alert('Firebase 설정이 필요해요! 코드 상단의 FIREBASE_CONFIG를 채워주세요.');
+}
+
+/* ══════════════════════════════════════════════
+   방 만들기 / 참여
+══════════════════════════════════════════════ */
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+async function createRoom() {
+  const nick = document.getElementById('input-nick').value.trim();
+  if (!nick) { alert('닉네임을 입력해줘!'); return; }
+
+  const code = generateCode();
+  await enterRoom(code, nick);
+}
+
+async function joinRoom() {
+  const nick = document.getElementById('input-nick').value.trim();
+  const code = document.getElementById('input-code').value.trim().toUpperCase();
+  if (!nick) { alert('닉네임을 입력해줘!'); return; }
+  if (code.length !== 4) { alert('방 코드는 4자리야!'); return; }
+
+  // 방 존재 확인
+  const snap = await db.ref(`rooms/${code}`).once('value');
+  const err = document.getElementById('err-msg');
+  if (!snap.exists()) {
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  await enterRoom(code, nick);
+}
+
+async function enterRoom(code, nick) {
+  myRoomId = code;
+  myNickname = nick;
+
+  roomRef = db.ref(`rooms/${code}`);
+  participantsRef = db.ref(`rooms/${code}/participants`);
+  throwRef = db.ref(`rooms/${code}/lastThrow`);
+  historyRef = db.ref(`rooms/${code}/history`);
+
+  // 참여자 등록 + 연결 끊기면 자동 제거
+  const myRef = participantsRef.child(USER_ID);
+  await myRef.set({ nickname: nick, joinedAt: Date.now() });
+  myRef.onDisconnect().remove();
+
+  // 리스너 등록
+  participantsRef.on('value', onParticipantsUpdate);
+  throwRef.on('value', onThrowUpdate);
+  historyRef.limitToLast(30).on('value', onHistoryUpdate);
+
+  // 화면 전환
+  document.getElementById('display-code').textContent = code;
+  document.getElementById('screen-join').classList.remove('active');
+  document.getElementById('screen-room').classList.add('active');
+
+  drawWheel(currentAngle);
+}
+
+/* ══════════════════════════════════════════════
+   Firebase 리스너
+══════════════════════════════════════════════ */
+function onParticipantsUpdate(snap) {
+  const data = snap.val() || {};
+  const list = document.getElementById('participants-list');
+  list.innerHTML = '';
+  Object.entries(data).forEach(([uid, p]) => {
+    const chip = document.createElement('div');
+    chip.className = 'participant-chip' + (uid === USER_ID ? ' me' : '');
+    chip.innerHTML = `<span class="dot"></span>${p.nickname}${uid === USER_ID ? ' (나)' : ''}`;
+    list.appendChild(chip);
+  });
+}
+
+function onThrowUpdate(snap) {
+  const data = snap.val();
+  if (!data || data.throwId === lastThrowId) return;
+  lastThrowId = data.throwId;
+  animateTo(data.idx, data.thrower);
+}
+
+function onHistoryUpdate(snap) {
+  const data = snap.val();
+  const list = document.getElementById('feed-list');
+  const empty = document.getElementById('feed-empty');
+
+  if (!data) {
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const items = Object.values(data).reverse();
+  list.innerHTML = '';
+  items.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'feed-item' + (i === 0 ? ' new' : '');
+    const dest = DESTINATIONS[item.idx];
+    const timeStr = new Date(item.timestamp).toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+    el.innerHTML = `
+      <div class="fi-who">${item.thrower}</div>
+      <div class="fi-dest">${dest.emoji} ${dest.name}</div>
+      <div class="fi-time">${timeStr}</div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   다트 던지기
+══════════════════════════════════════════════ */
+function throwDart() {
+  if (spinning) return;
+
+  const idx = Math.floor(Math.random() * N);
+  const throwId = Date.now() + '_' + USER_ID;
+  const histKey = historyRef.push().key;
+
+  // Firebase에 한 번에 기록 (thrower만 히스토리 씀)
+  db.ref(`rooms/${myRoomId}`).update({
+    lastThrow: { idx, thrower: myNickname, throwId, timestamp: Date.now() },
+    [`history/${histKey}`]: {
+      idx,
+      thrower: myNickname,
+      timestamp: Date.now()
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   바퀴 애니메이션 (모든 클라이언트 공통)
+══════════════════════════════════════════════ */
+function animateTo(targetIdx, throwerName) {
+  if (spinning) return;
+  spinning = true;
+
+  const btn = document.getElementById('btn-throw');
+  const status = document.getElementById('status-msg');
+  btn.disabled = true;
+  status.textContent = `${throwerName}이(가) 던지는 중... 🎯`;
+  status.className = 'throw-status spinning';
+
+  // 목표 각도 계산:
+  // pointer가 상단(-π/2)에 있을 때 targetIdx 세그먼트 중심이 그 아래 오도록
+  // finalAngle + (targetIdx + 0.5) * ARC = -π/2  →  finalAngle = -π/2 - (targetIdx+0.5)*ARC
+  let targetAngle = -Math.PI / 2 - (targetIdx + 0.5) * ARC;
+
+  // 최소 5바퀴 이상 회전하도록 full rotation 추가
+  const minSpin = 5 * 2 * Math.PI;
+  let delta = ((targetAngle - currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  if (delta === 0) delta = 2 * Math.PI;
+  targetAngle = currentAngle + delta;
+  while (targetAngle - currentAngle < minSpin) {
+    targetAngle += 2 * Math.PI;
+  }
+
+  const duration = 3800;
+  const startAngle = currentAngle;
+  const startTime = performance.now();
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+
+  function frame(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    currentAngle = startAngle + (targetAngle - startAngle) * easeOut(t);
+    drawWheel(currentAngle);
+
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      currentAngle = currentAngle % (2 * Math.PI);
+      spinning = false;
+      btn.disabled = false;
+      status.textContent = '다트를 던져봐!';
+      status.className = 'throw-status';
+      showResult(targetIdx, throwerName);
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* ══════════════════════════════════════════════
+   캔버스 그리기
+══════════════════════════════════════════════ */
+function drawWheel(angle) {
+  const canvas = document.getElementById('wheel');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, cx = W/2, cy = W/2, r = W/2 - 3;
+
+  ctx.clearRect(0, 0, W, W);
+
+  for (let i = 0; i < N; i++) {
+    const start = angle + i * ARC;
+    const end = start + ARC;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = PALETTE[i % PALETTE.length];
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + ARC / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.font = 'bold 13px "Nanum Gothic", sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(DESTINATIONS[i].name, r - 10, 5);
+    ctx.restore();
+  }
+}
+
+/* ══════════════════════════════════════════════
+   결과 카드 표시
+══════════════════════════════════════════════ */
+function showResult(idx, thrower) {
+  const dest = DESTINATIONS[idx];
+  const box = document.getElementById('result-box');
+  box.className = 'result-box lit';
+  box.innerHTML = `
+    <div class="result-thrower">${thrower}의 결과</div>
+    <div class="result-name">${dest.emoji} ${dest.name}</div>
+    <div class="result-desc">${dest.desc}</div>
+    <div class="result-tags">${dest.tags.map(t => `<span class="result-tag">${t}</span>`).join('')}</div>
+  `;
+}
+
+/* ══════════════════════════════════════════════
+   유틸
+══════════════════════════════════════════════ */
+function copyCode() {
+  navigator.clipboard.writeText(myRoomId).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '복사됨!';
+    setTimeout(() => btn.textContent = '복사', 1500);
+  });
+}
+
+// 코드 입력 자동 대문자
+document.getElementById('input-code').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+});
+
+// 초기 wheel (join 화면에서도 미리 그려두기)
+window.addEventListener('load', () => {
+  const canvas = document.getElementById('wheel');
+  if (canvas) drawWheel(0);
+});
+</script>
+</body>
+</html>
