@@ -3,524 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎯 여행지 다트 — 지도판</title>
+<title>🎯 여행지 다트</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0a0f1a;--bg2:#111827;--bg3:#1a2236;
+  --bg:#0a0f1a;--bg2:#111827;--bg3:#1a2236;--bg4:#222d42;
   --border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#7a82a0;
-  --accent:#e03c3c;--accent2:#f5a623;--green:#34d399;--radius:12px;
+  --accent:#e03c3c;--accent2:#f5a623;--green:#34d399;--blue:#60a5fa;
+  --radius:12px;
 }
 body{font-family:'Nanum Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+
+/* ─ 공통 ─ */
 .screen{width:100%;max-width:980px;display:none;}
 .screen.active{display:block;}
-#screen-room.active{display:flex;flex-direction:column;gap:14px;}
+.btn-red{padding:12px 32px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:'Black Han Sans',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;transition:background .15s,transform .1s;box-shadow:0 4px 0 #8b1a1a;}
+.btn-red:hover{background:#e85555;}
+.btn-red:active{transform:translateY(2px);box-shadow:0 2px 0 #8b1a1a;}
+.btn-red:disabled{background:#333;color:#555;box-shadow:none;cursor:not-allowed;}
+.btn-ghost{padding:10px 20px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;transition:color .15s;}
+.btn-ghost:hover{color:var(--text);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
 
-/* 참여 화면 */
+/* ─ 참여 화면 ─ */
 #screen-join{max-width:400px;margin:0 auto;}
 .join-logo{font-family:'Black Han Sans',sans-serif;font-size:40px;text-align:center;margin-bottom:6px;}
-.join-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:32px;}
+.join-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px;}
 .join-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;}
 .join-card label{display:block;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.join-card input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nanum Gothic',sans-serif;font-size:16px;padding:12px 14px;margin-bottom:14px;outline:none;transition:border-color 0.2s;}
-.join-card input:focus{border-color:var(--accent);}
+.join-card input,.join-card select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Nanum Gothic',sans-serif;font-size:15px;padding:11px 14px;margin-bottom:14px;outline:none;transition:border-color .2s;}
+.join-card input:focus,.join-card select:focus{border-color:var(--accent);}
 .join-card input::placeholder{color:var(--muted);}
-.join-divider{display:flex;align-items:center;gap:12px;margin:18px 0;}
+.join-card select option{background:#1a2236;}
+.join-divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
 .join-divider span{color:var(--muted);font-size:12px;white-space:nowrap;}
 .join-divider::before,.join-divider::after{content:'';flex:1;border-top:1px solid var(--border);}
-.btn-primary{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:'Black Han Sans',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer;transition:background 0.15s,transform 0.1s;box-shadow:0 4px 0 #8b1a1a;}
-.btn-primary:hover{background:#e85555;}
-.btn-primary:active{transform:translateY(2px);box-shadow:0 2px 0 #8b1a1a;}
-.btn-primary:disabled{background:#333;box-shadow:none;cursor:not-allowed;}
-.btn-secondary{width:100%;padding:12px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;transition:color 0.15s;}
-.btn-secondary:hover{color:var(--text);}
 .err-msg{color:#ff6b6b;font-size:12px;margin-top:-8px;margin-bottom:12px;display:none;}
 
-/* 헤더 */
+/* ─ 방 화면 공통 헤더 ─ */
+#screen-room.active{display:flex;flex-direction:column;gap:14px;}
 .room-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;}
 .room-code-wrap{display:flex;align-items:center;gap:10px;}
 .room-code-label{font-size:11px;color:var(--muted);}
-.room-code{font-family:'Black Han Sans',sans-serif;font-size:20px;letter-spacing:4px;color:var(--accent2);}
-.copy-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:4px 10px;cursor:pointer;}
-.copy-btn:hover{color:var(--text);}
-.participants{display:flex;gap:8px;flex-wrap:wrap;}
+.room-code{font-family:'Black Han Sans',sans-serif;font-size:18px;letter-spacing:3px;color:var(--accent2);}
+.share-btn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;padding:4px 10px;cursor:pointer;}
+.share-btn:hover{color:var(--text);}
+.p-chips{display:flex;gap:6px;flex-wrap:wrap;}
 .p-chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:12px;padding:4px 12px;display:flex;align-items:center;gap:5px;}
 .p-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
-.p-chip.me{border-color:rgba(224,60,60,0.4);color:#ff9090;}
+.p-chip.me{border-color:rgba(224,60,60,0.35);color:#ff9090;}
+.p-chip.threw{border-color:rgba(52,211,153,0.4);color:#34d399;}
 
-/* 게임 레이아웃 */
-.game-main{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start;}
-@media(max-width:700px){.game-main{grid-template-columns:1fr;}}
+/* ─ 로비 페이즈 ─ */
+.lobby-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:32px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);}
+.lobby-title{font-family:'Black Han Sans',sans-serif;font-size:22px;}
+.lobby-sub{color:var(--muted);font-size:14px;text-align:center;line-height:1.7;}
+.lobby-count{font-size:28px;font-family:'Black Han Sans',sans-serif;color:var(--accent2);}
+.lobby-link{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--muted);word-break:break-all;text-align:center;width:100%;max-width:480px;}
+.lobby-link strong{color:var(--accent2);}
 
-/* 지도 영역 */
-.map-area{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;}
-.map-wrap{position:relative;}
+/* ─ 게임 레이아웃 ─ */
+.game-layout{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start;}
+@media(max-width:700px){.game-layout{grid-template-columns:1fr;}}
+
+/* ─ 지도 영역 ─ */
+.map-area{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;align-items:center;gap:14px;}
 #map-canvas{display:block;border-radius:8px;}
-
+.progress-bar-wrap{width:100%;max-width:380px;}
+.progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s;}
 .throw-status{font-size:13px;color:var(--muted);text-align:center;min-height:18px;}
-.throw-status.spinning{color:var(--accent2);}
-.btn-throw{padding:13px 44px;background:var(--accent);color:white;border:none;border-radius:50px;font-family:'Black Han Sans',sans-serif;font-size:19px;letter-spacing:2px;cursor:pointer;transition:background 0.15s,transform 0.1s;box-shadow:0 5px 0 #8b1a1a;}
-.btn-throw:hover{background:#e85555;}
-.btn-throw:active{transform:translateY(3px);box-shadow:0 2px 0 #8b1a1a;}
-.btn-throw:disabled{background:#2a2a2a;color:#444;box-shadow:none;cursor:not-allowed;}
+.throw-status.active{color:var(--accent2);}
+.btn-throw-big{padding:13px 44px;background:var(--accent);color:#fff;border:none;border-radius:50px;font-family:'Black Han Sans',sans-serif;font-size:19px;letter-spacing:2px;cursor:pointer;transition:background .15s,transform .1s;box-shadow:0 5px 0 #8b1a1a;}
+.btn-throw-big:hover{background:#e85555;}
+.btn-throw-big:active{transform:translateY(3px);box-shadow:0 2px 0 #8b1a1a;}
+.btn-throw-big:disabled{background:#2a2a2a;color:#444;box-shadow:none;cursor:not-allowed;}
+.result-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:center;width:100%;max-width:380px;min-height:72px;transition:border-color .3s;}
+.result-card.lit{border-color:var(--accent2);}
+.rc-placeholder{color:var(--muted);font-size:13px;line-height:1.7;}
+.rc-who{font-size:12px;color:var(--accent2);margin-bottom:5px;}
+.rc-name{font-family:'Black Han Sans',sans-serif;font-size:24px;margin-bottom:4px;}
+.rc-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:6px;}
+.rc-tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.rc-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:var(--muted);}
 
-.result-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;min-height:76px;text-align:center;width:100%;max-width:380px;transition:border-color 0.3s;}
-.result-box.lit{border-color:var(--accent2);}
-.result-placeholder{color:var(--muted);font-size:13px;line-height:1.7;}
-.result-name{font-family:'Black Han Sans',sans-serif;font-size:26px;margin-bottom:4px;}
-.result-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
-.result-tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
-.result-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.06);color:var(--muted);}
-.result-thrower{font-size:12px;color:var(--accent2);margin-bottom:6px;}
-
-/* 사이드 */
-.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;min-height:340px;overflow:hidden;}
+/* ─ 사이드 ─ */
+.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;}
 .side-tabs{display:flex;border-bottom:1px solid var(--border);}
-.side-tab{flex:1;padding:12px;font-size:12px;text-align:center;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:color 0.15s,background 0.15s;}
+.side-tab{flex:1;padding:11px;font-size:12px;text-align:center;cursor:pointer;color:var(--muted);background:transparent;border:none;transition:color .15s,background .15s;}
 .side-tab.active{color:var(--text);background:var(--bg3);}
-.side-content{display:none;flex-direction:column;gap:10px;padding:14px;flex:1;}
+.side-content{display:none;flex-direction:column;gap:8px;padding:14px;flex:1;}
 .side-content.active{display:flex;}
-.feed-list{display:flex;flex-direction:column;gap:7px;overflow-y:auto;max-height:450px;}
+.feed-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:440px;}
 .feed-list::-webkit-scrollbar{width:3px;}
 .feed-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.feed-item{background:var(--bg3);border-radius:7px;padding:9px 11px;font-size:12px;border-left:3px solid transparent;animation:slideIn 0.3s ease;}
+.feed-item{background:var(--bg3);border-radius:7px;padding:9px 11px;font-size:12px;border-left:3px solid transparent;animation:slideIn .3s ease;}
 .feed-item.new{border-left-color:var(--accent2);}
 @keyframes slideIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
 .fi-who{color:var(--accent2);font-weight:700;margin-bottom:2px;}
 .fi-dest{font-family:'Black Han Sans',sans-serif;font-size:15px;}
 .fi-time{font-size:10px;color:var(--muted);margin-top:2px;}
-.feed-empty{color:var(--muted);font-size:13px;text-align:center;margin-top:20px;line-height:1.7;}
-
-/* 지역 토글 */
-.toggle-list{display:flex;flex-direction:column;gap:5px;overflow-y:auto;max-height:420px;}
+.feed-empty{color:var(--muted);font-size:13px;text-align:center;margin-top:16px;line-height:1.7;}
+.toggle-list{display:flex;flex-direction:column;gap:4px;overflow-y:auto;max-height:420px;}
 .toggle-list::-webkit-scrollbar{width:3px;}
-.toggle-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.toggle-item{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:7px;padding:8px 11px;font-size:13px;cursor:pointer;user-select:none;}
-.toggle-item .t-color{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.toggle-item .t-name{flex:1;}
-.toggle-item .t-check{font-size:15px;color:var(--green);}
+.toggle-item{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:7px;padding:8px 11px;font-size:12px;cursor:pointer;user-select:none;transition:opacity .2s;}
+.toggle-item .t-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .toggle-item.off{opacity:0.4;}
+.toggle-item .t-check{margin-left:auto;color:var(--green);font-size:14px;}
 .toggle-item.off .t-check{color:var(--muted);}
-.toggle-hint{font-size:11px;color:var(--muted);}
+
+/* ─ 결과 페이즈 오버레이 ─ */
+.results-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.results-modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;}
+.results-modal h2{font-family:'Black Han Sans',sans-serif;font-size:22px;text-align:center;margin-bottom:6px;}
+.results-modal .rm-sub{color:var(--muted);font-size:13px;text-align:center;margin-bottom:20px;}
+.throw-results{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+@media(max-width:400px){.throw-results{grid-template-columns:1fr;}}
+.tr-item{background:var(--bg3);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);}
+.tr-item.winner{border-color:var(--accent2);background:rgba(245,166,35,0.07);}
+.tr-nick{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.tr-dest{font-family:'Black Han Sans',sans-serif;font-size:18px;}
+.province-pick{display:flex;flex-direction:column;gap:8px;}
+.pp-title{font-size:13px;color:var(--muted);text-align:center;}
+.pp-winner{background:rgba(245,166,35,0.1);border:1px solid var(--accent2);border-radius:10px;padding:16px;text-align:center;}
+.pp-winner-name{font-family:'Black Han Sans',sans-serif;font-size:28px;margin-bottom:6px;}
+.pp-winner-desc{font-size:13px;color:var(--muted);}
+.rm-actions{display:flex;gap:10px;flex-direction:column;}
+
+/* ─ 2차 뽑기 페이즈 ─ */
+.round2-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.r2-header{text-align:center;}
+.r2-header h2{font-family:'Black Han Sans',sans-serif;font-size:22px;margin-bottom:6px;}
+.r2-header p{color:var(--muted);font-size:13px;}
+.r2-from{font-size:20px;color:var(--accent2);}
+
+/* 슬롯머신 스타일 뽑기 */
+.slot-machine{background:var(--bg3);border:2px solid var(--border);border-radius:12px;padding:20px 32px;text-align:center;min-width:280px;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+.slot-emoji{font-size:36px;margin-bottom:6px;}
+.slot-name{font-family:'Black Han Sans',sans-serif;font-size:28px;transition:all .08s;}
+.slot-station{font-size:12px;color:var(--accent2);margin-top:4px;}
+.slot-desc{font-size:13px;color:var(--muted);margin-top:6px;max-width:240px;line-height:1.6;}
+
+/* 최종 결과 */
+.final-wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:32px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);}
+.final-card{background:var(--bg3);border:2px solid var(--accent2);border-radius:16px;padding:28px 32px;text-align:center;max-width:400px;width:100%;}
+.final-title{font-size:14px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;}
+.final-region{font-family:'Black Han Sans',sans-serif;font-size:22px;color:var(--accent2);margin-bottom:4px;}
+.final-arrow{font-size:24px;color:var(--muted);margin:8px 0;}
+.final-dest-emoji{font-size:48px;margin-bottom:8px;}
+.final-dest-name{font-family:'Black Han Sans',sans-serif;font-size:36px;margin-bottom:8px;}
+.final-station{font-size:13px;color:var(--accent2);margin-bottom:10px;}
+.final-desc{font-size:13px;color:var(--muted);line-height:1.7;}
 </style>
 </head>
 <body>
 
-<!-- 참여 화면 -->
+<!-- ══ 참여 화면 ══ -->
 <div id="screen-join" class="screen active">
   <div class="join-logo">🗺️</div>
-  <p class="join-sub">한국 지도에 다트 던져서 여행지 결정!<br>친구들이랑 같이 해봐!</p>
+  <p class="join-sub">지도에 다트 던져서 여행지 결정!<br>친구들이랑 같이!</p>
   <div class="join-card">
     <label>닉네임</label>
-    <input id="input-nick" type="text" maxlength="12" placeholder="예: 메로" autocomplete="off">
-    <label>방 코드로 참여</label>
-    <input id="input-code" type="text" maxlength="4" placeholder="4자리 코드 (예: AB3K)" autocomplete="off" style="text-transform:uppercase;letter-spacing:4px;font-family:monospace;">
-    <p class="err-msg" id="err-msg">방을 찾을 수 없어요!</p>
-    <button class="btn-primary" onclick="joinRoom()">🚪 참여하기</button>
-    <div class="join-divider"><span>또는</span></div>
-    <button class="btn-secondary" onclick="createRoom()">✨ 새 방 만들기</button>
+    <input id="input-nick" type="text" maxlength="10" placeholder="예: 메로" autocomplete="off">
+    <div id="join-section">
+      <label>방 코드로 참여</label>
+      <input id="input-code" type="text" maxlength="4" placeholder="4자리 코드" autocomplete="off" style="text-transform:uppercase;letter-spacing:4px;font-family:monospace;">
+      <p class="err-msg" id="err-msg">방을 찾을 수 없어요!</p>
+      <button class="btn-red" style="width:100%" onclick="joinRoom()">🚪 참여하기</button>
+      <div class="join-divider"><span>또는</span></div>
+      <label>최대 인원 설정</label>
+      <select id="input-max">
+        <option value="2">2명</option>
+        <option value="3">3명</option>
+        <option value="4" selected>4명</option>
+        <option value="5">5명</option>
+        <option value="6">6명</option>
+      </select>
+      <button class="btn-ghost" style="width:100%" onclick="createRoom()">✨ 새 방 만들기</button>
+    </div>
   </div>
 </div>
 
-<!-- 게임 화면 -->
+<!-- ══ 방 화면 ══ -->
 <div id="screen-room" class="screen">
+
+  <!-- 헤더 -->
   <div class="room-header">
     <div class="room-code-wrap">
       <span class="room-code-label">방 코드</span>
-      <span class="room-code" id="display-code">----</span>
-      <button class="copy-btn" onclick="copyCode()">복사</button>
+      <span class="room-code" id="hdr-code">----</span>
+      <button class="share-btn" onclick="shareLink()">🔗 링크 복사</button>
     </div>
-    <div class="participants" id="participants-list"></div>
+    <div class="p-chips" id="p-chips"></div>
   </div>
-  <div class="game-main">
+
+  <!-- 로비 페이즈 -->
+  <div id="phase-lobby" class="lobby-wrap" style="display:none">
+    <div class="lobby-title">🎯 여행지 다트</div>
+    <p class="lobby-sub">모두 입장하면 방장이 시작버튼을 눌러줘!</p>
+    <div class="lobby-count"><span id="lobby-count">0</span> / <span id="lobby-max">4</span>명 입장</div>
+    <div class="lobby-link">공유 링크: <strong id="share-url-display"></strong></div>
+    <button class="btn-red" id="btn-start" onclick="startGame()" style="display:none">🎯 게임 시작!</button>
+    <p id="lobby-wait-msg" style="color:var(--muted);font-size:13px;"></p>
+  </div>
+
+  <!-- 게임 페이즈 (지도) -->
+  <div id="phase-game" class="game-layout" style="display:none">
     <div class="map-area">
-      <div class="map-wrap">
-        <canvas id="map-canvas" width="380" height="520"></canvas>
+      <canvas id="map-canvas" width="380" height="520"></canvas>
+      <div class="progress-bar-wrap">
+        <div class="progress-label">
+          <span id="prog-text">0명 던짐</span>
+          <span id="prog-frac">0 / 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
       </div>
-      <p class="throw-status" id="status-msg">🎯 다트를 던져봐!</p>
-      <button class="btn-throw" id="btn-throw" onclick="throwDart()">🎯 던져!</button>
-      <div class="result-box" id="result-box">
-        <p class="result-placeholder">지도에 다트를 꽂아봐!<br>어느 지역이 나올지 두근두근 🗺️</p>
+      <p class="throw-status" id="throw-status">🎯 다트를 던져봐!</p>
+      <button class="btn-throw-big" id="btn-throw" onclick="throwDart()">🎯 던져!</button>
+      <div class="result-card" id="result-card">
+        <p class="rc-placeholder">어느 지역이 나올지 두근두근 🗺️</p>
       </div>
     </div>
     <div class="side-panel">
       <div class="side-tabs">
-        <button class="side-tab active" onclick="switchTab('feed')">📌 결과 피드</button>
-        <button class="side-tab" onclick="switchTab('toggle')">🗂️ 지역 설정</button>
+        <button class="side-tab active" onclick="switchTab('feed')">📌 피드</button>
+        <button class="side-tab" onclick="switchTab('toggle')">🗂️ 지역</button>
       </div>
       <div class="side-content active" id="tab-feed">
-        <div class="feed-list" id="feed-list">
-          <p class="feed-empty">아직 아무도 안 던졌어!<br>첫 다트를 날려봐 🎯</p>
-        </div>
+        <div class="feed-list" id="feed-list"><p class="feed-empty">첫 다트를 날려봐!</p></div>
       </div>
       <div class="side-content" id="tab-toggle">
-        <p class="toggle-hint">포함하지 않을 지역은 꺼봐!</p>
+        <p style="font-size:11px;color:var(--muted)">빼고 싶은 지역은 꺼봐 (실시간 반영)</p>
         <div class="toggle-list" id="toggle-list"></div>
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- 결과 오버레이 (모두 던진 후) -->
+  <div class="results-overlay" id="results-overlay" style="display:none">
+    <div class="results-modal">
+      <h2>🎯 1차 결과</h2>
+      <p class="rm-sub">모두 던졌어! 어느 지역으로 갈까?</p>
+      <div class="throw-results" id="throw-results-grid"></div>
+      <div class="province-pick">
+        <p class="pp-title">최다 득표 지역</p>
+        <div class="pp-winner">
+          <div class="pp-winner-name" id="winner-name">-</div>
+          <div class="pp-winner-desc" id="winner-desc">-</div>
+        </div>
+        <div class="rm-actions">
+          <button class="btn-red" id="btn-confirm-province" onclick="confirmProvince()" style="display:none">
+            ✅ 이 지역으로 결정! → 2차 뽑기
+          </button>
+          <p id="waiting-creator-msg" style="color:var(--muted);font-size:13px;text-align:center;display:none">
+            방장이 지역을 확정하는 중...
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2차 세부 여행지 페이즈 -->
+  <div id="phase-round2" style="display:none">
+    <div class="round2-wrap">
+      <div class="r2-header">
+        <h2>📍 2차 — 세부 여행지</h2>
+        <p>기차로 갈 수 있는 곳 중에서 뽑아!</p>
+        <div class="r2-from" id="r2-from-label">-</div>
+      </div>
+      <div class="slot-machine" id="slot-machine">
+        <div class="slot-emoji" id="slot-emoji">🗺️</div>
+        <div class="slot-name" id="slot-name">???</div>
+        <div class="slot-station" id="slot-station"></div>
+        <div class="slot-desc" id="slot-desc">다트를 던져서 뽑아봐!</div>
+      </div>
+      <button class="btn-throw-big" id="btn-round2" onclick="throwRound2()">🎯 2차 뽑기!</button>
+    </div>
+  </div>
+
+  <!-- 최종 결과 페이즈 -->
+  <div id="phase-final" style="display:none">
+    <div class="final-wrap">
+      <div class="final-card">
+        <div class="final-title">🎉 최종 여행지 확정!</div>
+        <div class="final-region" id="final-region">-</div>
+        <div class="final-arrow">↓</div>
+        <div class="final-dest-emoji" id="final-emoji">🗺️</div>
+        <div class="final-dest-name" id="final-name">-</div>
+        <div class="final-station" id="final-station">-</div>
+        <div class="final-desc" id="final-desc">-</div>
+      </div>
+      <button class="btn-ghost" onclick="resetGame()">🔄 다시 뽑기</button>
+    </div>
+  </div>
+
+</div><!-- end screen-room -->
+
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.js"></script>
 <script>
 /* ══════════════════════════════════════
-   🔧 Firebase 설정 — 여기만 수정!
+   🔧 Firebase 설정
 ══════════════════════════════════════ */
 const FIREBASE_CONFIG = {
-
   apiKey:            "AIzaSyA3cVODaqtDxHPD0P2CDijTaNrvzTgIPc4",
-
   authDomain:        "girls-night-d1269.firebaseapp.com",
-
   databaseURL:       "https://girls-night-d1269-default-rtdb.firebaseio.com",
-
   projectId:         "girls-night-d1269",
-
   storageBucket:     "girls-night-d1269.firebasestorage.app",
-
   messagingSenderId: "3708739778",
-
   appId:             "1:3708739778:web:6f0f5ed9905ed2ef8b9b5b"
-
 };
 
 /* ══════════════════════════════════════
-   🗺️ 17개 시도 데이터
-   (canvas 380×520 기준 픽셀 좌표)
-   
-   lon_to_x = (lon - 124.5) / 6.5 * 380
-   lat_to_y = (38.8 - lat) / 6.0 * 520
+   🗺️ 17개 시도 + 2차 세부 여행지
 ══════════════════════════════════════ */
 const PROVINCES = [
-  // ── 작은 광역시 먼저 (겹치는 경우 우선 감지) ──
-  {
-    name:'서울', emoji:'🏙️',
-    desc:'경복궁, 한강, 명동, 홍대! 뭐든 다 있는 대한민국의 심장.',
-    tags:['도시','쇼핑','문화'],
-    color:'#9B7FA8',
-    poly:[[128,97],[163,97],[163,127],[128,127]],
-    center:[145,112]
-  },
-  {
-    name:'인천', emoji:'✈️',
-    desc:'송도, 강화도, 차이나타운! 서울 옆 의외의 여행지.',
-    tags:['도시','섬','역사'],
-    color:'#7B9AAF',
-    poly:[[68,100],[128,100],[128,148],[68,148]],
-    center:[100,124]
-  },
-  {
-    name:'대전', emoji:'🍞',
-    desc:'성심당 빵, 대청호, 계족산! KTX로 당일치기.',
-    tags:['빵','호수','도시'],
-    color:'#AF7B7B',
-    poly:[[153,248],[188,248],[188,278],[153,278]],
-    center:[171,263]
-  },
-  {
-    name:'세종', emoji:'🏛️',
-    desc:'행정수도! 잘 계획된 신도시와 아름다운 공원.',
-    tags:['도시','공원','현대'],
-    color:'#B8A86E',
-    poly:[[148,225],[180,225],[180,250],[148,250]],
-    center:[164,237]
-  },
-  {
-    name:'대구', emoji:'🌹',
-    desc:'서문시장, 팔공산, 앞산! 치맥의 성지.',
-    tags:['도시','시장','자연'],
-    color:'#C4907A',
-    poly:[[215,268],[258,268],[258,304],[215,304]],
-    center:[237,286]
-  },
-  {
-    name:'울산', emoji:'🐋',
-    desc:'간절곶, 영남알프스, 대왕암! 산업도시의 반전 매력.',
-    tags:['일출','자연','바다'],
-    color:'#7B9AAF',
-    poly:[[265,255],[315,255],[315,308],[265,308]],
-    center:[291,280]
-  },
-  {
-    name:'광주', emoji:'🎨',
-    desc:'무등산, 국립아시아문화전당, 5.18! 예향의 도시.',
-    tags:['문화','자연','역사'],
-    color:'#A87B9B',
-    poly:[[106,322],[148,322],[148,356],[106,356]],
-    center:[127,339]
-  },
-  {
-    name:'부산', emoji:'🌉',
-    desc:'해운대, 광안리, 감천마을! 바다와 도시의 완벽한 조화.',
-    tags:['바다','야경','맛집'],
-    color:'#C17B7B',
-    poly:[[255,325],[315,325],[315,380],[255,380]],
-    center:[287,352]
-  },
-  // ── 도/특별자치도 ──
-  {
-    name:'경기도', emoji:'🏘️',
-    desc:'수원화성, 남한산성, 가평 자라섬! 서울 근교 완벽 드라이브.',
-    tags:['근교','자연','역사'],
-    color:'#7EA87E',
-    poly:[[65,60],[210,60],[210,100],[163,100],[163,127],[128,127],[128,100],[68,100],[65,60]],
-    center:[148,78]
-  },
-  {
-    name:'강원도', emoji:'🏔️',
-    desc:'설악산, 강릉, 정동진, 춘천! 동해와 산의 완벽한 콤비.',
-    tags:['산','바다','자연'],
-    color:'#6A8FAF',
-    poly:[[210,28],[335,28],[335,205],[210,205]],
-    center:[271,112]
-  },
-  {
-    name:'충청남도', emoji:'🌾',
-    desc:'공주, 부여, 태안! 백제 역사와 서해안 드라이브.',
-    tags:['역사','해변','자연'],
-    color:'#C49A6C',
-    poly:[[55,175],[150,175],[150,280],[88,280],[55,240]],
-    center:[105,228]
-  },
-  {
-    name:'충청북도', emoji:'🌄',
-    desc:'단양 8경, 충주호, 청주! 내륙 여행의 숨겨진 보석.',
-    tags:['자연','호수','역사'],
-    color:'#9A8070',
-    poly:[[178,175],[275,175],[275,268],[188,268],[178,248]],
-    center:[228,218]
-  },
-  {
-    name:'경상북도', emoji:'🏯',
-    desc:'안동 하회마을, 경주, 포항! 신라 천년의 역사가 살아있어.',
-    tags:['역사','문화','바다'],
-    color:'#8A7BAF',
-    poly:[[215,175],[335,175],[335,330],[258,330],[258,268],[215,268]],
-    center:[282,238]
-  },
-  {
-    name:'경상남도', emoji:'⛵',
-    desc:'통영, 거제, 남해! 한려해상 국립공원의 절경.',
-    tags:['바다','섬','드라이브'],
-    color:'#5FA8A0',
-    poly:[[148,330],[255,330],[255,390],[148,390]],
-    center:[205,358]
-  },
-  {
-    name:'전라북도', emoji:'🥁',
-    desc:'전주 한옥마을, 군산, 변산반도! 맛과 멋의 고장.',
-    tags:['한옥','맛집','역사'],
-    color:'#8A7BAF',
-    poly:[[55,268],[178,268],[178,355],[88,355],[55,320]],
-    center:[120,308]
-  },
-  {
-    name:'전라남도', emoji:'🌸',
-    desc:'순천만, 여수, 담양! 봄이 가장 아름다운 땅.',
-    tags:['자연','바다','드라이브'],
-    color:'#7EA8A0',
-    poly:[[60,348],[148,348],[178,348],[178,425],[60,425]],
-    center:[123,388]
-  },
-  {
-    name:'제주도', emoji:'🌊',
-    desc:'한라산, 성산일출봉, 애월 카페! 언제 가도 좋은 섬.',
-    tags:['자연','바다','카페'],
-    color:'#5FA8A0',
-    poly:[[80,448],[188,448],[188,498],[80,498]],
-    center:[134,473]
-  },
+  { name:'서울', emoji:'🏙️', desc:'경복궁, 한강, 홍대! 뭐든 다 있어.', tags:['도시','쇼핑','문화'], color:'#9B7FA8', poly:[[128,97],[163,97],[163,127],[128,127]], center:[145,112] },
+  { name:'인천', emoji:'✈️', desc:'차이나타운, 강화도, 송도! 의외의 여행지.', tags:['도시','섬','역사'], color:'#7B9AAF', poly:[[68,100],[128,100],[128,148],[68,148]], center:[100,124] },
+  { name:'대전', emoji:'🍞', desc:'성심당 빵, 대청호! KTX로 당일치기.', tags:['빵','호수','도시'], color:'#AF7B7B', poly:[[153,248],[188,248],[188,278],[153,278]], center:[171,263] },
+  { name:'세종', emoji:'🏛️', desc:'행정수도! 잘 계획된 신도시와 공원.', tags:['도시','공원','현대'], color:'#B8A86E', poly:[[148,225],[180,225],[180,250],[148,250]], center:[164,237] },
+  { name:'대구', emoji:'🌹', desc:'서문시장, 팔공산! 치맥의 성지.', tags:['도시','시장','자연'], color:'#C4907A', poly:[[215,268],[258,268],[258,304],[215,304]], center:[237,286] },
+  { name:'울산', emoji:'🐋', desc:'간절곶, 영남알프스! 산업도시의 반전.', tags:['일출','자연','바다'], color:'#7B9AAF', poly:[[265,255],[315,255],[315,308],[265,308]], center:[291,280] },
+  { name:'광주', emoji:'🎨', desc:'무등산, 동명동 카페거리! 예향의 도시.', tags:['문화','자연','역사'], color:'#A87B9B', poly:[[106,322],[148,322],[148,356],[106,356]], center:[127,339] },
+  { name:'부산', emoji:'🌉', desc:'해운대, 광안리, 감천마을! 바다와 도시.', tags:['바다','야경','맛집'], color:'#C17B7B', poly:[[255,325],[315,325],[315,380],[255,380]], center:[287,352] },
+  { name:'경기도', emoji:'🏘️', desc:'수원화성, 가평! 서울 근교 드라이브.', tags:['근교','자연','역사'], color:'#7EA87E', poly:[[65,60],[210,60],[210,100],[163,100],[163,127],[128,127],[128,100],[68,100],[65,60]], center:[148,78] },
+  { name:'강원도', emoji:'🏔️', desc:'설악산, 강릉! 동해와 산의 완벽한 조합.', tags:['산','바다','자연'], color:'#6A8FAF', poly:[[210,28],[335,28],[335,205],[210,205]], center:[271,112] },
+  { name:'충청남도', emoji:'🌾', desc:'공주, 부여, 태안! 백제 역사와 서해.', tags:['역사','해변','자연'], color:'#C49A6C', poly:[[55,175],[150,175],[150,280],[88,280],[55,240]], center:[105,228] },
+  { name:'충청북도', emoji:'🌄', desc:'단양, 충주호! 내륙 여행의 보석.', tags:['자연','호수','역사'], color:'#9A8070', poly:[[178,175],[275,175],[275,268],[188,268],[178,248]], center:[228,218] },
+  { name:'경상북도', emoji:'🏯', desc:'안동, 경주! 신라 천년의 역사.', tags:['역사','문화','바다'], color:'#8A7BAF', poly:[[215,175],[335,175],[335,330],[258,330],[258,268],[215,268]], center:[282,238] },
+  { name:'경상남도', emoji:'⛵', desc:'통영, 거제, 남해! 한려해상 절경.', tags:['바다','섬','드라이브'], color:'#5FA8A0', poly:[[148,330],[255,330],[255,390],[148,390]], center:[205,358] },
+  { name:'전라북도', emoji:'🥁', desc:'전주, 군산! 맛과 멋의 고장.', tags:['한옥','맛집','역사'], color:'#8A9BAF', poly:[[55,268],[178,268],[178,355],[88,355],[55,320]], center:[120,308] },
+  { name:'전라남도', emoji:'🌸', desc:'순천만, 여수! 봄이 가장 아름다운 땅.', tags:['자연','바다','드라이브'], color:'#7EA8A0', poly:[[60,348],[178,348],[178,425],[60,425]], center:[123,388] },
+  { name:'제주도', emoji:'🌊', desc:'한라산, 성산일출봉! 언제가도 좋은 섬.', tags:['자연','바다','카페'], color:'#5FA8A0', poly:[[80,448],[188,448],[188,498],[80,498]], center:[134,473] },
+];
+
+/* 2차 세부 여행지 (기차/대중교통 접근 가능) */
+const SUB_DESTS = [
+  /* 0 서울 */   [{e:'🎸',n:'홍대·합정',s:'홍대입구역 (2호선)',d:'감성 카페와 클럽, 젊음의 거리'},{e:'☕',n:'성수동',s:'성수역 (2호선)',d:'힙한 공장 카페와 팝업스토어'},{e:'🏯',n:'북촌·인사동',s:'안국역 (3호선)',d:'한옥마을과 전통 공방'},{e:'🌊',n:'여의도 한강',s:'여의도역 (5호선)',d:'한강공원과 봄 벚꽃'},{e:'💄',n:'강남·압구정',s:'압구정로데오역',d:'트렌디한 카페와 쇼핑'},{e:'🌙',n:'이태원·한남',s:'이태원역 (6호선)',d:'이국적 분위기와 다양한 맛집'}],
+  /* 1 인천 */   [{e:'🥟',n:'차이나타운·개항장',s:'인천역 (1호선)',d:'짜장면 원조와 근대역사 거리'},{e:'🏙️',n:'송도',s:'인천대입구역',d:'센트럴파크와 트리플스트리트'},{e:'🌾',n:'강화도',s:'강화버스터미널 (서울역버스)',d:'역사 유적과 고려산 진달래'}],
+  /* 2 대전 */   [{e:'🍞',n:'대전역·성심당',s:'대전역 (KTX)',d:'대한민국 국민빵집과 구도심 탐방'},{e:'♨️',n:'유성온천',s:'유성온천역',d:'노천온천과 엑스포과학공원'},{e:'🌿',n:'계족산 황톳길',s:'대전역→버스',d:'맨발로 걷는 힐링 황토길'}],
+  /* 3 세종 */   [{e:'🌊',n:'세종 호수공원',s:'오송역 (KTX)→버스',d:'국내 최대 인공호수 야경'},{e:'🎋',n:'세종 금강 수변공원',s:'조치원역',d:'자전거 라이딩과 강변 카페'}],
+  /* 4 대구 */   [{e:'🛍️',n:'동성로·서문시장',s:'대구역 (KTX)',d:'대구 최대 번화가와 야시장'},{e:'🦆',n:'수성못·들안길',s:'수성못역',d:'오리배와 맛집 골목'},{e:'🌃',n:'앞산·안지랑',s:'안지랑역→버스',d:'케이블카와 곱창골목'}],
+  /* 5 울산 */   [{e:'🌅',n:'간절곶',s:'울산역 (KTX)→버스',d:'한반도 첫 일출, 소원 우체통'},{e:'🎋',n:'태화강 국가정원',s:'태화강역',d:'십리대숲과 봄 청보리 물결'},{e:'🏄',n:'진하해수욕장',s:'울산역→버스',d:'조용한 해수욕장과 명선교'}],
+  /* 6 광주 */   [{e:'☕',n:'동명동·양림동',s:'광주송정역 (KTX)',d:'힙한 골목 카페와 근대 역사마을'},{e:'🏔️',n:'무등산',s:'광주역→버스',d:'광주의 진산, 누에봉 전망대'},{e:'🎨',n:'국립아시아문화전당',s:'문화전당역',d:'아시아 최대 복합 문화공간'}],
+  /* 7 부산 */   [{e:'🌊',n:'해운대',s:'해운대역 (동해선)',d:'대한민국 최고 해수욕장'},{e:'🌃',n:'광안리',s:'광안역 (2호선)',d:'광안대교 야경이 환상적'},{e:'🎨',n:'감천문화마을',s:'토성역→마을버스',d:'알록달록 미로 마을'},{e:'🦞',n:'자갈치·남포동',s:'남포역 (1호선)',d:'자갈치시장과 깡통야시장'},{e:'🌸',n:'기장·죽성',s:'기장역 (동해선)',d:'드라마 세트장과 대변항 멸치'}],
+  /* 8 경기도 */ [{e:'🏰',n:'수원화성',s:'수원역 (1호선·KTX)',d:'조선 성곽과 통닭거리'},{e:'🎪',n:'가평·자라섬',s:'가평역 (ITX-청춘)',d:'자라섬 캠핑과 레일바이크'},{e:'🌿',n:'양평 두물머리',s:'양평역 (경의중앙선)',d:'두 강이 만나는 절경'},{e:'📚',n:'파주 헤이리·출판도시',s:'금촌역→버스',d:'예술마을과 북카페 투어'}],
+  /* 9 강원도 */ [{e:'☕',n:'강릉 안목',s:'강릉역 (KTX)',d:'커피거리와 경포대 해변'},{e:'🌅',n:'정동진',s:'정동진역 (무궁화)',d:'모래시계공원과 일출 명소'},{e:'🦆',n:'춘천 남이섬',s:'춘천역 (ITX-청춘)',d:'닭갈비와 낭만 섬 여행'},{e:'🏔️',n:'원주 소금산',s:'원주역 (KTX)',d:'출렁다리와 뮤지엄 산'},{e:'🎿',n:'속초 청초호',s:'속초터미널 (동서울)',d:'설악산과 아바이순대 닭강정'}],
+  /* 10 충청남도 */ [{e:'🌰',n:'공주',s:'공주역 (KTX)',d:'공산성, 무령왕릉, 알밤 한과'},{e:'🌸',n:'부여',s:'논산역→버스',d:'낙화암과 백마강 유람선'},{e:'🏖️',n:'태안·만리포',s:'홍성역→버스',d:'서해 최고의 해수욕장'},{e:'♨️',n:'아산 온양온천',s:'온양온천역',d:'천년 온천과 현충사'}],
+  /* 11 충청북도 */ [{e:'🏞️',n:'단양',s:'단양역',d:'단양 8경과 마늘소불고기'},{e:'🚡',n:'제천 청풍호',s:'제천역',d:'청풍호반 케이블카와 의림지'},{e:'🍺',n:'청주 성안길',s:'오송역 (KTX)→버스',d:'청주 구도심 먹거리 골목'}],
+  /* 12 경상북도 */ [{e:'🏯',n:'경주 황리단길',s:'신경주역 (KTX)',d:'불국사, 첨성대, 황리단길 카페'},{e:'🥢',n:'안동 하회마을',s:'안동역',d:'유네스코 세계유산과 찜닭'},{e:'🌅',n:'포항 구룡포',s:'포항역 (KTX)',d:'과메기와 호미곶 일출'},{e:'🍎',n:'영주 부석사',s:'영주역',d:'천년고찰과 순흥 사과'}],
+  /* 13 경상남도 */ [{e:'⛵',n:'통영',s:'마산역→버스',d:'한국의 나폴리, 굴과 꿀빵'},{e:'🌺',n:'거제 외도',s:'창원중앙역→버스',d:'외도 보타니아와 바람의 언덕'},{e:'🌿',n:'남해 독일마을',s:'진주역→버스',d:'다랭이논과 독일마을'},{e:'🏮',n:'진주 남강',s:'진주역',d:'진주성과 유등축제'}],
+  /* 14 전라북도 */ [{e:'🏮',n:'전주 한옥마을',s:'전주역 (KTX)',d:'비빔밥과 막걸리골목 한옥'},{e:'🚢',n:'군산 근대역사거리',s:'군산역',d:'짬뽕과 근대 문화 탐방'},{e:'💝',n:'남원 광한루',s:'남원역',d:'춘향제와 광한루원'}],
+  /* 15 전라남도 */ [{e:'🌿',n:'순천만 국가정원',s:'순천역 (KTX)',d:'대한민국 최초 국가정원'},{e:'🌅',n:'여수 밤바다',s:'여수엑스포역 (KTX)',d:'낭만항구와 돌산갓김치'},{e:'🚢',n:'목포',s:'목포역 (KTX)',d:'낙지와 홍어, 근대역사 거리'},{e:'🌸',n:'담양',s:'광주송정→버스',d:'메타세쿼이아길과 떡갈비'}],
+  /* 16 제주도 */ [{e:'🌋',n:'제주시내·동문시장',s:'제주공항 (비행기)',d:'흑돼지와 동문시장 야시장'},{e:'🌅',n:'성산일출봉',s:'제주공항→버스',d:'유네스코 세계자연유산'},{e:'☕',n:'애월 카페거리',s:'제주공항→렌트',d:'바다뷰 카페와 한담 해변'},{e:'🏝️',n:'서귀포·중문',s:'제주공항→버스',d:'외돌개와 천지연폭포'}],
 ];
 
 /* ══════════════════════════════════════
    앱 상태
 ══════════════════════════════════════ */
-let db, participantsRef, throwRef, historyRef, enabledRef;
-let enabled = PROVINCES.map(() => true);
-let currentProvinceIdx = -1;
-let dartPos = null;
-let animating = false;
-let myNickname = '', myRoomId = '', lastThrowId = null;
-const USER_ID = 'u_' + Math.random().toString(36).slice(2, 10);
+let db, participantsRef, throwRef, historyRef, enabledRef, phaseRef, roomSettingsRef;
+let enabled = PROVINCES.map(()=>true);
+let currentHighlight = -1, dartPos = null, animating = false;
+let myNick = '', myRoomId = '', myUserId = 'u_'+Math.random().toString(36).slice(2,10);
+let isCreator = false, maxParticipants = 4;
+let lastThrowId = null, allThrows = {};
 
-try {
+// Firebase SDK 로드 완료 후 초기화
+let _fbReady = false;
+function _initFB() {
+  if (typeof firebase === "undefined") { setTimeout(_initFB, 80); return; }
+  if (_fbReady) return;
+  _fbReady = true;
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.database();
-} catch(e) {
-  alert('Firebase 설정이 필요해요!');
 }
+_initFB();
 
 /* ══════════════════════════════════════
-   Point-in-polygon (ray casting)
+   URL 파라미터 처리
 ══════════════════════════════════════ */
-function pointInPoly(px, py, poly) {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i][0], yi = poly[i][1];
-    const xj = poly[j][0], yj = poly[j][1];
-    if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) {
-      inside = !inside;
-    }
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const roomCode = params.get('room');
+  if (roomCode) {
+    document.getElementById('input-code').value = roomCode.toUpperCase();
+    document.getElementById('join-section').querySelector('label').textContent = '방 코드 (링크로 자동 입력됨)';
   }
-  return inside;
-}
+  drawMap(-1, null);
+});
 
 /* ══════════════════════════════════════
-   지도 그리기
-══════════════════════════════════════ */
-const canvas = document.getElementById('map-canvas');
-const ctx = canvas.getContext('2d');
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
-  return {r,g,b};
-}
-
-function lightenColor(hex, amt=40) {
-  const {r,g,b} = hexToRgb(hex);
-  return `rgb(${Math.min(255,r+amt)},${Math.min(255,g+amt)},${Math.min(255,b+amt)})`;
-}
-
-function drawMap() {
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0, 0, W, H);
-
-  // 바다 배경
-  ctx.fillStyle = '#0d1f3c';
-  ctx.fillRect(0, 0, W, H);
-
-  // 바다 텍스처 (dots)
-  ctx.fillStyle = 'rgba(255,255,255,0.015)';
-  for (let x = 10; x < W; x += 20) {
-    for (let y = 10; y < H; y += 20) {
-      ctx.beginPath();
-      ctx.arc(x, y, 1, 0, 2*Math.PI);
-      ctx.fill();
-    }
-  }
-
-  // 지역 그리기
-  PROVINCES.forEach((p, i) => {
-    const isHighlighted = i === currentProvinceIdx;
-    const isDisabled = !enabled[i];
-
-    ctx.beginPath();
-    ctx.moveTo(p.poly[0][0], p.poly[0][1]);
-    p.poly.slice(1).forEach(pt => ctx.lineTo(pt[0], pt[1]));
-    ctx.closePath();
-
-    if (isDisabled) {
-      ctx.fillStyle = 'rgba(40,45,60,0.7)';
-    } else if (isHighlighted) {
-      ctx.fillStyle = lightenColor(p.color, 55);
-    } else {
-      ctx.fillStyle = p.color;
-    }
-    ctx.fill();
-
-    // 경계선
-    ctx.strokeStyle = isHighlighted ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.18)';
-    ctx.lineWidth = isHighlighted ? 2 : 0.8;
-    ctx.stroke();
-
-    // 하이라이트 글로우
-    if (isHighlighted) {
-      ctx.shadowColor = lightenColor(p.color, 80);
-      ctx.shadowBlur = 12;
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-    }
-
-    if (!isDisabled) {
-      // 지역명 레이블
-      const [cx, cy] = p.center;
-      ctx.save();
-      ctx.font = `bold ${i < 8 ? 10 : 11}px "Nanum Gothic"`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      // 텍스트 배경
-      const label = p.emoji + ' ' + p.name;
-      const tw = ctx.measureText(label).width;
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.beginPath();
-      ctx.roundRect(cx - tw/2 - 4, cy - 8, tw + 8, 16, 4);
-      ctx.fill();
-
-      ctx.fillStyle = isHighlighted ? '#ffffff' : 'rgba(255,255,255,0.88)';
-      ctx.fillText(label, cx, cy);
-      ctx.restore();
-    }
-  });
-
-  // 다트 그리기
-  if (dartPos) {
-    drawDart(dartPos.x, dartPos.y);
-  }
-}
-
-function drawDart(x, y) {
-  ctx.save();
-  ctx.translate(x, y);
-
-  // 꼬리 날개
-  ctx.beginPath();
-  ctx.moveTo(0, -32);
-  ctx.lineTo(-7, -44);
-  ctx.lineTo(0, -40);
-  ctx.lineTo(7, -44);
-  ctx.closePath();
-  ctx.fillStyle = '#e03c3c';
-  ctx.fill();
-
-  // 다트 몸통
-  const grad = ctx.createLinearGradient(-3, -32, 3, -32);
-  grad.addColorStop(0, '#888');
-  grad.addColorStop(1, '#ccc');
-  ctx.fillStyle = grad;
-  ctx.fillRect(-2.5, -30, 5, 26);
-
-  // 다트 팁
-  ctx.beginPath();
-  ctx.moveTo(0, 8);
-  ctx.lineTo(-3.5, -4);
-  ctx.lineTo(3.5, -4);
-  ctx.closePath();
-  ctx.fillStyle = '#e8e8e0';
-  ctx.fill();
-
-  // 꽂힌 효과 (흔들림 줄기)
-  if (dartPos && dartPos.landed) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([2,3]);
-    ctx.beginPath();
-    ctx.moveTo(0, 8);
-    ctx.lineTo(0, 18);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  ctx.restore();
-}
-
-/* ══════════════════════════════════════
-   방 참여 / 생성
+   방 생성 / 참여
 ══════════════════════════════════════ */
 function generateCode() {
-  return Array.from({length:4}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+  return Array.from({length:4},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 }
 
 async function createRoom() {
   const nick = document.getElementById('input-nick').value.trim();
   if (!nick) { alert('닉네임을 입력해줘!'); return; }
-  await enterRoom(generateCode(), nick);
+  const max = parseInt(document.getElementById('input-max').value);
+  const code = generateCode();
+  isCreator = true;
+  maxParticipants = max;
+
+  // URL 업데이트
+  const newUrl = `${location.pathname}?room=${code}`;
+  history.pushState({}, '', newUrl);
+
+  await db.ref(`rooms/${code}/settings`).set({
+    maxParticipants: max, creatorId: myUserId, phase: 'lobby'
+  });
+  await enterRoom(code, nick);
 }
 
 async function joinRoom() {
@@ -529,208 +426,451 @@ async function joinRoom() {
   if (!nick) { alert('닉네임을 입력해줘!'); return; }
   if (code.length !== 4) { alert('방 코드는 4자리야!'); return; }
   const snap = await db.ref(`rooms/${code}`).once('value');
-  const err = document.getElementById('err-msg');
-  if (!snap.exists()) { err.style.display='block'; return; }
-  err.style.display = 'none';
+  if (!snap.exists()) { document.getElementById('err-msg').style.display='block'; return; }
+  document.getElementById('err-msg').style.display='none';
+
+  const settings = snap.val().settings || {};
+  maxParticipants = settings.maxParticipants || 4;
+  isCreator = (settings.creatorId === myUserId);
+
+  history.pushState({}, '', `${location.pathname}?room=${code}`);
   await enterRoom(code, nick);
 }
 
 async function enterRoom(code, nick) {
-  myRoomId = code; myNickname = nick;
+  myRoomId = code; myNick = nick;
   participantsRef = db.ref(`rooms/${code}/participants`);
-  throwRef        = db.ref(`rooms/${code}/lastThrow`);
+  throwRef        = db.ref(`rooms/${code}/throws`);
   historyRef      = db.ref(`rooms/${code}/history`);
   enabledRef      = db.ref(`rooms/${code}/enabled`);
+  phaseRef        = db.ref(`rooms/${code}/settings/phase`);
+  roomSettingsRef = db.ref(`rooms/${code}/settings`);
 
-  const myRef = participantsRef.child(USER_ID);
+  const myRef = participantsRef.child(myUserId);
   await myRef.set({ nickname: nick, joinedAt: Date.now() });
   myRef.onDisconnect().remove();
 
-  participantsRef.on('value', onParticipantsUpdate);
-  throwRef.on('value', onThrowUpdate);
-  historyRef.limitToLast(30).on('value', onHistoryUpdate);
-  enabledRef.on('value', snap => {
-    const data = snap.val();
-    if (data) enabled = data;
-    renderToggleList();
-    drawMap();
-  });
+  document.getElementById('hdr-code').textContent = code;
+  const shareUrl = location.href;
+  document.getElementById('share-url-display').textContent = shareUrl;
 
-  document.getElementById('display-code').textContent = code;
   document.getElementById('screen-join').classList.remove('active');
   document.getElementById('screen-room').classList.add('active');
 
+  // 리스너 등록
+  participantsRef.on('value', onParticipants);
+  throwRef.on('value', onThrows);
+  historyRef.limitToLast(30).on('value', onHistory);
+  enabledRef.on('value', snap => {
+    if (snap.val()) enabled = snap.val();
+    renderToggleList(); drawMap(currentHighlight, dartPos);
+  });
+  phaseRef.on('value', snap => {
+    const phase = snap.val() || 'lobby';
+    renderPhase(phase);
+  });
+  db.ref(`rooms/${code}/settings/lastThrow`).on('value', onLastThrow);
+  db.ref(`rooms/${code}/settings/selectedProvince`).on('value', snap => {
+    if (snap.val() !== null && snap.val() !== undefined) {
+      onProvinceSelected(snap.val());
+    }
+  });
+  db.ref(`rooms/${code}/settings/subDestIdx`).on('value', snap => {
+    if (snap.val() !== null && snap.val() !== undefined) {
+      showFinalResult(db.ref(`rooms/${code}/settings/selectedProvince`).__val, snap.val());
+      db.ref(`rooms/${code}/settings/selectedProvince`).once('value').then(s => {
+        showFinalResult(s.val(), snap.val());
+      });
+    }
+  });
+
   renderToggleList();
-  drawMap();
+  drawMap(-1, null);
+}
+
+/* ══════════════════════════════════════
+   페이즈 렌더링
+══════════════════════════════════════ */
+function renderPhase(phase) {
+  document.getElementById('phase-lobby').style.display   = phase==='lobby'   ? 'flex':'none';
+  document.getElementById('phase-game').style.display    = (phase==='round1') ? 'grid':'none';
+  document.getElementById('results-overlay').style.display = phase==='results' ? 'flex':'none';
+  document.getElementById('phase-round2').style.display  = phase==='round2'  ? 'block':'none';
+  document.getElementById('phase-final').style.display   = phase==='final'   ? 'block':'none';
 }
 
 /* ══════════════════════════════════════
    Firebase 리스너
 ══════════════════════════════════════ */
-function onParticipantsUpdate(snap) {
+function onParticipants(snap) {
   const data = snap.val() || {};
-  const list = document.getElementById('participants-list');
-  list.innerHTML = '';
+  const chips = document.getElementById('p-chips');
+  chips.innerHTML = '';
+  const count = Object.keys(data).length;
+
   Object.entries(data).forEach(([uid, p]) => {
+    const threw = allThrows[uid] !== undefined;
     const chip = document.createElement('div');
-    chip.className = 'p-chip' + (uid === USER_ID ? ' me' : '');
-    chip.innerHTML = `<span class="dot"></span>${p.nickname}${uid===USER_ID?' (나)':''}`;
-    list.appendChild(chip);
+    chip.className = `p-chip${uid===myUserId?' me':''}${threw?' threw':''}`;
+    chip.innerHTML = `<span class="dot"></span>${p.nickname}${uid===myUserId?' (나)':''}${threw?' ✓':''}`;
+    chips.appendChild(chip);
   });
+
+  // 로비 UI
+  document.getElementById('lobby-count').textContent = count;
+  document.getElementById('lobby-max').textContent = maxParticipants;
+  const startBtn = document.getElementById('btn-start');
+  const waitMsg  = document.getElementById('lobby-wait-msg');
+  if (isCreator) {
+    startBtn.style.display = count >= 1 ? 'block' : 'none';
+    waitMsg.style.display  = 'none';
+  } else {
+    startBtn.style.display = 'none';
+    waitMsg.textContent    = '방장이 시작하면 시작돼!';
+    waitMsg.style.display  = 'block';
+  }
 }
 
-function onThrowUpdate(snap) {
+function onThrows(snap) {
+  allThrows = snap.val() || {};
+  const participants = Object.keys(allThrows);
+
+  // 진행 바 업데이트
+  roomSettingsRef.once('value').then(s => {
+    const settings = s.val() || {};
+    const total = settings.maxParticipants || maxParticipants;
+    const done  = Object.keys(allThrows).length;
+    document.getElementById('prog-text').textContent = `${done}명 던짐`;
+    document.getElementById('prog-frac').textContent = `${done} / ${total}`;
+    document.getElementById('prog-fill').style.width = `${(done/total)*100}%`;
+
+    // 내가 이미 던졌으면 버튼 비활성
+    if (allThrows[myUserId] !== undefined) {
+      document.getElementById('btn-throw').disabled = true;
+      document.getElementById('btn-throw').textContent = '✓ 던짐!';
+    }
+
+    // 모두 던졌으면 결과 페이즈로
+    if (done >= total && settings.phase === 'round1') {
+      showResultsOverlay();
+      if (isCreator) phaseRef.set('results');
+    }
+  });
+
+  // 참여자 칩 업데이트
+  participantsRef.once('value').then(s => onParticipants(s));
+}
+
+function onLastThrow(snap) {
   const data = snap.val();
   if (!data || data.throwId === lastThrowId) return;
   lastThrowId = data.throwId;
   animateDart(data.provinceIdx, data.thrower);
 }
 
-function onHistoryUpdate(snap) {
+function onHistory(snap) {
   const data = snap.val();
   const list = document.getElementById('feed-list');
-  if (!data) { list.innerHTML='<p class="feed-empty">아직 아무도 안 던졌어!<br>첫 다트를 날려봐 🎯</p>'; return; }
-  list.innerHTML = '';
-  Object.values(data).reverse().forEach((item, i) => {
+  if (!data) { list.innerHTML='<p class="feed-empty">아직 아무도 안 던졌어!</p>'; return; }
+  list.innerHTML='';
+  Object.values(data).reverse().forEach((item,i)=>{
     const p = PROVINCES[item.provinceIdx];
     const el = document.createElement('div');
-    el.className = 'feed-item' + (i===0?' new':'');
-    el.innerHTML = `<div class="fi-who">${item.thrower}</div>
-      <div class="fi-dest">${p ? p.emoji+' '+p.name : '?'}</div>
+    el.className='feed-item'+(i===0?' new':'');
+    el.innerHTML=`<div class="fi-who">${item.thrower}</div>
+      <div class="fi-dest">${p?p.emoji+' '+p.name:'?'}</div>
       <div class="fi-time">${new Date(item.timestamp).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</div>`;
     list.appendChild(el);
   });
 }
 
 /* ══════════════════════════════════════
-   다트 던지기
+   게임 진행
 ══════════════════════════════════════ */
-function throwDart() {
-  if (animating) return;
-  const enabledIdxs = enabled.map((v,i)=>v?i:-1).filter(i=>i>=0);
-  if (enabledIdxs.length === 0) { alert('지역을 최소 1개는 켜놔야 해!'); return; }
+async function startGame() {
+  await phaseRef.set('round1');
+}
 
-  const provinceIdx = enabledIdxs[Math.floor(Math.random() * enabledIdxs.length)];
-  const throwId = Date.now() + '_' + USER_ID;
+function throwDart() {
+  if (animating || allThrows[myUserId]!==undefined) return;
+  const activeIdxs = enabled.map((v,i)=>v?i:-1).filter(i=>i>=0);
+  if (!activeIdxs.length) { alert('지역을 하나 이상 켜줘!'); return; }
+
+  const idx = activeIdxs[Math.floor(Math.random()*activeIdxs.length)];
+  const throwId = Date.now()+'_'+myUserId;
   const histKey = historyRef.push().key;
 
   db.ref(`rooms/${myRoomId}`).update({
-    lastThrow: { provinceIdx, thrower: myNickname, throwId, timestamp: Date.now() },
-    [`history/${histKey}`]: { provinceIdx, thrower: myNickname, timestamp: Date.now() }
+    [`throws/${myUserId}`]: idx,
+    [`history/${histKey}`]: { provinceIdx:idx, thrower:myNick, timestamp:Date.now() },
+    'settings/lastThrow': { provinceIdx:idx, thrower:myNick, throwId }
   });
 }
 
 /* ══════════════════════════════════════
-   다트 애니메이션
+   결과 오버레이
 ══════════════════════════════════════ */
-function animateDart(provinceIdx, throwerName) {
-  if (animating) return;
-  animating = true;
+function showResultsOverlay() {
+  // 득표 집계
+  const votes = {};
+  Object.values(allThrows).forEach(idx => { votes[idx] = (votes[idx]||0)+1; });
+  const winnerIdx = parseInt(Object.entries(votes).sort((a,b)=>b[1]-a[1])[0][0]);
+  const winner = PROVINCES[winnerIdx];
 
-  const btn = document.getElementById('btn-throw');
-  const status = document.getElementById('status-msg');
-  btn.disabled = true;
-  status.textContent = `${throwerName}이(가) 다트를 날리는 중... 🎯`;
-  status.className = 'throw-status spinning';
+  // 결과 카드 그리기
+  const grid = document.getElementById('throw-results-grid');
+  grid.innerHTML='';
+  participantsRef.once('value').then(snap=>{
+    const parts = snap.val()||{};
+    Object.entries(allThrows).forEach(([uid,idx])=>{
+      const p = PROVINCES[idx];
+      const nick = parts[uid]?.nickname || '?';
+      const el = document.createElement('div');
+      el.className='tr-item'+(idx===winnerIdx?' winner':'');
+      el.innerHTML=`<div class="tr-nick">${nick}</div><div class="tr-dest">${p.emoji} ${p.name}</div>`;
+      grid.appendChild(el);
+    });
+  });
 
-  const p = PROVINCES[provinceIdx];
-  const targetX = p.center[0] + (Math.random() - 0.5) * 12;
-  const targetY = p.center[1] + (Math.random() - 0.5) * 10;
-  const startY = -50;
+  document.getElementById('winner-name').textContent = winner.emoji+' '+winner.name;
+  document.getElementById('winner-desc').textContent = winner.desc;
 
-  currentProvinceIdx = -1;
-  dartPos = { x: targetX, y: startY, landed: false };
-
-  const duration = 900;
-  const startTime = performance.now();
-
-  function easeIn(t) { return t * t * t; }
-
-  function frame(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = easeIn(t);
-    dartPos = { x: targetX, y: startY + (targetY - startY) * eased, landed: false };
-    drawMap();
-
-    if (t < 1) {
-      requestAnimationFrame(frame);
-    } else {
-      // 꽂힘!
-      dartPos = { x: targetX, y: targetY, landed: true };
-      currentProvinceIdx = provinceIdx;
-      drawMap();
-      
-      // 흔들림 효과
-      let shakes = 0;
-      const shakeInterval = setInterval(() => {
-        dartPos.x = targetX + (Math.random() - 0.5) * 3;
-        drawMap();
-        shakes++;
-        if (shakes > 5) {
-          clearInterval(shakeInterval);
-          dartPos = { x: targetX, y: targetY, landed: true };
-          drawMap();
-          animating = false;
-          btn.disabled = false;
-          status.textContent = '🎯 다트를 던져봐!';
-          status.className = 'throw-status';
-          showResult(provinceIdx, throwerName);
-        }
-      }, 60);
-    }
+  // 크리에이터만 결정 버튼
+  const confirmBtn = document.getElementById('btn-confirm-province');
+  const waitMsg    = document.getElementById('waiting-creator-msg');
+  if (isCreator) {
+    confirmBtn.style.display = 'block';
+    waitMsg.style.display    = 'none';
+    confirmBtn.dataset.idx   = winnerIdx;
+  } else {
+    confirmBtn.style.display = 'none';
+    waitMsg.style.display    = 'block';
   }
-
-  requestAnimationFrame(frame);
 }
 
-function showResult(idx, thrower) {
+async function confirmProvince() {
+  const idx = parseInt(document.getElementById('btn-confirm-province').dataset.idx);
+  await db.ref(`rooms/${myRoomId}/settings`).update({ selectedProvince: idx, phase: 'round2' });
+}
+
+function onProvinceSelected(idx) {
+  if (idx===null||idx===undefined) return;
   const p = PROVINCES[idx];
-  const box = document.getElementById('result-box');
-  box.className = 'result-box lit';
-  box.innerHTML = `
-    <div class="result-thrower">${thrower}의 결과</div>
-    <div class="result-name">${p.emoji} ${p.name}</div>
-    <div class="result-desc">${p.desc}</div>
-    <div class="result-tags">${p.tags.map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>
-  `;
+  document.getElementById('r2-from-label').textContent = p.emoji+' '+p.name+' 지역';
+  renderSubSlot(idx, null);
+  // 2차 버튼: 크리에이터만 던질 수 있음
+  document.getElementById('btn-round2').disabled = !isCreator;
+  document.getElementById('btn-round2').title = isCreator ? '' : '방장만 던질 수 있어';
+}
+
+/* ══════════════════════════════════════
+   2차 슬롯머신 뽑기
+══════════════════════════════════════ */
+let slotInterval = null;
+
+function throwRound2() {
+  if (!isCreator) return;
+  db.ref(`rooms/${myRoomId}/settings/selectedProvince`).once('value').then(snap => {
+    const provinceIdx = snap.val();
+    const subs = SUB_DESTS[provinceIdx];
+    if (!subs||!subs.length) return;
+
+    document.getElementById('btn-round2').disabled = true;
+    let count = 0;
+    const totalSpins = 28 + Math.floor(Math.random()*12);
+
+    slotInterval = setInterval(()=>{
+      const i = Math.floor(Math.random()*subs.length);
+      renderSubSlot(provinceIdx, i, true);
+      count++;
+      if (count >= totalSpins) {
+        clearInterval(slotInterval);
+        const finalIdx = Math.floor(Math.random()*subs.length);
+        renderSubSlot(provinceIdx, finalIdx, false);
+        // Firebase에 저장
+        db.ref(`rooms/${myRoomId}/settings`).update({
+          subDestIdx: finalIdx, phase: 'final'
+        });
+      }
+    }, count < 10 ? 80 : count < 20 ? 140 : 220);
+  });
+}
+
+function renderSubSlot(provinceIdx, subIdx, spinning=false) {
+  const subs = SUB_DESTS[provinceIdx];
+  if (!subs) return;
+  const sub = subIdx!==null ? subs[subIdx] : { e:'🗺️', n:'???', s:'', d:'다트를 던져서 뽑아봐!' };
+  document.getElementById('slot-emoji').textContent  = spinning ? ['🗺️','📍','🎯','✈️','🚄'][Math.floor(Math.random()*5)] : sub.e;
+  document.getElementById('slot-name').textContent   = spinning ? '...' : sub.n;
+  document.getElementById('slot-station').textContent = spinning ? '' : sub.s;
+  document.getElementById('slot-desc').textContent   = spinning ? '' : sub.d;
+}
+
+function showFinalResult(provinceIdx, subIdx) {
+  if (provinceIdx===null||provinceIdx===undefined||subIdx===null||subIdx===undefined) return;
+  const p   = PROVINCES[provinceIdx];
+  const sub = SUB_DESTS[provinceIdx]?.[subIdx];
+  if (!p||!sub) return;
+  document.getElementById('final-region').textContent  = p.emoji+' '+p.name;
+  document.getElementById('final-emoji').textContent   = sub.e;
+  document.getElementById('final-name').textContent    = sub.n;
+  document.getElementById('final-station').textContent = '🚆 '+sub.s;
+  document.getElementById('final-desc').textContent    = sub.d;
+  phaseRef.set('final');
+}
+
+function resetGame() {
+  if (!isCreator) return;
+  db.ref(`rooms/${myRoomId}/settings`).update({
+    phase:'round1', selectedProvince:null, subDestIdx:null, lastThrow:null
+  });
+  db.ref(`rooms/${myRoomId}/throws`).remove();
+  db.ref(`rooms/${myRoomId}/history`).remove();
+  allThrows={};
+  currentHighlight=-1;
+  dartPos=null;
+  document.getElementById('btn-throw').disabled=false;
+  document.getElementById('btn-throw').textContent='🎯 던져!';
+  document.getElementById('btn-round2').disabled=!isCreator;
+  drawMap(-1,null);
+}
+
+/* ══════════════════════════════════════
+   지도 + 다트 애니메이션
+══════════════════════════════════════ */
+const canvas = document.getElementById('map-canvas');
+const ctx    = canvas.getContext('2d');
+
+function lighten(hex, a=40) {
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgb(${Math.min(255,r+a)},${Math.min(255,g+a)},${Math.min(255,b+a)})`;
+}
+
+function drawMap(highlightIdx, dPos) {
+  const W=380,H=520;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#0d1f3c'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,0.012)';
+  for(let x=10;x<W;x+=20) for(let y=10;y<H;y+=20){ctx.beginPath();ctx.arc(x,y,1,0,2*Math.PI);ctx.fill();}
+
+  PROVINCES.forEach((p,i)=>{
+    const isOn=enabled[i], isHi=i===highlightIdx;
+    ctx.beginPath();
+    ctx.moveTo(p.poly[0][0],p.poly[0][1]);
+    p.poly.slice(1).forEach(pt=>ctx.lineTo(pt[0],pt[1]));
+    ctx.closePath();
+    if(!isOn) ctx.fillStyle='rgba(30,35,50,0.8)';
+    else if(isHi) ctx.fillStyle=lighten(p.color,60);
+    else ctx.fillStyle=p.color;
+    ctx.fill();
+    ctx.strokeStyle=isHi?'rgba(255,255,255,0.7)':'rgba(255,255,255,0.18)';
+    ctx.lineWidth=isHi?2:0.8;
+    ctx.stroke();
+
+    if(isOn){
+      const [cx,cy]=p.center;
+      const label=p.emoji+' '+p.name;
+      ctx.font=`bold ${i<8?10:11}px "Nanum Gothic"`;
+      const tw=ctx.measureText(label).width;
+      ctx.fillStyle='rgba(0,0,0,0.32)';
+      ctx.beginPath();ctx.roundRect(cx-tw/2-4,cy-8,tw+8,16,4);ctx.fill();
+      ctx.fillStyle=isHi?'#fff':'rgba(255,255,255,0.88)';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(label,cx,cy);
+    }
+  });
+
+  if(dPos) {
+    ctx.save();ctx.translate(dPos.x,dPos.y);
+    // 꼬리
+    ctx.beginPath();ctx.moveTo(0,-32);ctx.lineTo(-7,-44);ctx.lineTo(0,-40);ctx.lineTo(7,-44);ctx.closePath();
+    ctx.fillStyle='#e03c3c';ctx.fill();
+    // 몸통
+    ctx.fillStyle='#cccccc';ctx.fillRect(-2.5,-30,5,26);
+    // 팁
+    ctx.beginPath();ctx.moveTo(0,8);ctx.lineTo(-3.5,-4);ctx.lineTo(3.5,-4);ctx.closePath();
+    ctx.fillStyle='#e8e8e0';ctx.fill();
+    ctx.restore();
+  }
+}
+
+function animateDart(provinceIdx, thrower) {
+  if(animating) return;
+  animating=true;
+  document.getElementById('btn-throw').disabled=true;
+  const status=document.getElementById('throw-status');
+  status.textContent=`${thrower}의 다트가 날아간다... 🎯`;
+  status.className='throw-status active';
+
+  const p=PROVINCES[provinceIdx];
+  const tx=p.center[0]+(Math.random()-.5)*12;
+  const ty=p.center[1]+(Math.random()-.5)*10;
+  const sy=-50;
+  const dur=800, t0=performance.now();
+  const ease=t=>t*t*t;
+
+  function frame(now){
+    const t=Math.min((now-t0)/dur,1);
+    drawMap(provinceIdx,{x:tx,y:sy+(ty-sy)*ease(t)});
+    if(t<1){requestAnimationFrame(frame);return;}
+    // 꽂힘 흔들림
+    let n=0;
+    const shake=setInterval(()=>{
+      drawMap(provinceIdx,{x:tx+(Math.random()-.5)*3,y:ty});
+      n++;
+      if(n>5){
+        clearInterval(shake);
+        currentHighlight=provinceIdx; dartPos={x:tx,y:ty};
+        drawMap(provinceIdx,dartPos);
+        animating=false;
+        status.textContent='🎯 다트를 던져봐!';
+        status.className='throw-status';
+        // 내 결과 카드
+        const box=document.getElementById('result-card');
+        box.className='result-card lit';
+        box.innerHTML=`<div class="rc-who">${thrower}의 결과</div>
+          <div class="rc-name">${p.emoji} ${p.name}</div>
+          <div class="rc-desc">${p.desc}</div>
+          <div class="rc-tags">${p.tags.map(t=>`<span class="rc-tag">${t}</span>`).join('')}</div>`;
+        if(allThrows[myUserId]===undefined) document.getElementById('btn-throw').disabled=false;
+      }
+    },60);
+  }
+  requestAnimationFrame(frame);
 }
 
 /* ══════════════════════════════════════
    지역 토글
 ══════════════════════════════════════ */
-function renderToggleList() {
-  const list = document.getElementById('toggle-list');
-  list.innerHTML = '';
-  PROVINCES.forEach((p, i) => {
-    const el = document.createElement('div');
-    el.className = 'toggle-item' + (enabled[i] ? '' : ' off');
-    el.innerHTML = `<span class="t-color" style="background:${p.color}"></span>
-      <span class="t-name">${p.emoji} ${p.name}</span>
-      <span class="t-check">${enabled[i] ? '✓' : '○'}</span>`;
-    el.onclick = () => {
-      const newEnabled = [...enabled];
-      newEnabled[i] = !newEnabled[i];
-      enabledRef.set(newEnabled);
-    };
+function renderToggleList(){
+  const list=document.getElementById('toggle-list');
+  list.innerHTML='';
+  PROVINCES.forEach((p,i)=>{
+    const el=document.createElement('div');
+    el.className='toggle-item'+(enabled[i]?'':' off');
+    el.innerHTML=`<span class="t-dot" style="background:${p.color}"></span>
+      <span>${p.emoji} ${p.name}</span>
+      <span class="t-check">${enabled[i]?'✓':'○'}</span>`;
+    el.onclick=()=>{ const n=[...enabled]; n[i]=!n[i]; enabledRef.set(n); };
     list.appendChild(el);
   });
 }
 
-/* ── 유틸 ── */
-function switchTab(tab) {
+function switchTab(tab){
   document.querySelectorAll('.side-tab').forEach((el,i)=>el.classList.toggle('active',(tab==='feed'&&i===0)||(tab==='toggle'&&i===1)));
-  document.getElementById('tab-feed').classList.toggle('active', tab==='feed');
-  document.getElementById('tab-toggle').classList.toggle('active', tab==='toggle');
+  document.getElementById('tab-feed').classList.toggle('active',tab==='feed');
+  document.getElementById('tab-toggle').classList.toggle('active',tab==='toggle');
 }
-function copyCode() {
-  navigator.clipboard.writeText(myRoomId).then(()=>{
-    const btn=document.querySelector('.copy-btn');
-    btn.textContent='복사됨!';
-    setTimeout(()=>btn.textContent='복사',1500);
+
+function shareLink(){
+  navigator.clipboard.writeText(location.href).then(()=>{
+    const btn=document.querySelector('.share-btn');
+    btn.textContent='✓ 복사됨!';
+    setTimeout(()=>btn.textContent='🔗 링크 복사',1500);
   });
 }
+
 document.getElementById('input-code').addEventListener('input',function(){this.value=this.value.toUpperCase();});
-window.addEventListener('load', () => drawMap());
 </script>
 </body>
 </html>
