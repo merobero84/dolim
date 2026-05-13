@@ -222,6 +222,7 @@ body{font-family:'Nanum Gothic',sans-serif;background:var(--bg);color:var(--text
       </div>
       <p class="throw-status" id="throw-status">🎯 다트를 던져봐!</p>
       <button class="btn-throw-big" id="btn-throw" onclick="throwDart()">🎯 던져!</button>
+      <button id="btn-force-result" onclick="forceResult()" style="display:none;padding:8px 20px;background:transparent;border:1px solid var(--accent2);color:var(--accent2);border-radius:8px;font-size:13px;cursor:pointer;margin-top:-6px;">⚡ 지금 결과보기 (방장)</button>
       <div class="result-card" id="result-card">
         <p class="rc-placeholder">어느 지역이 나올지 두근두근 🗺️</p>
       </div>
@@ -474,6 +475,11 @@ async function enterRoom(code, nick) {
   phaseRef.on('value', snap => {
     const phase = snap.val() || 'lobby';
     renderPhase(phase);
+    // 방장이면 강제 결과보기 버튼 표시 (round1 중일 때만)
+    db.ref(`rooms/${myRoomId}/settings/creatorId`).once('value').then(cs => {
+      const btn = document.getElementById('btn-force-result');
+      if (btn) btn.style.display = (cs.val() === myUserId && phase === 'round1') ? 'block' : 'none';
+    });
   });
   db.ref(`rooms/${code}/settings/lastThrow`).on('value', onLastThrow);
   db.ref(`rooms/${code}/settings/selectedProvince`).on('value', snap => {
@@ -655,6 +661,14 @@ function showResultsOverlay() {
       waitMsg.style.display    = 'block';
     }
   });
+}
+
+// 방장이 인원 안 채우고 강제로 결과 진행
+async function forceResult() {
+  const snap = await db.ref(`rooms/${myRoomId}/settings/creatorId`).once('value');
+  if (snap.val() !== myUserId) return;
+  showResultsOverlay();
+  phaseRef.set('results');
 }
 
 async function confirmProvince() {
