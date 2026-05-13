@@ -367,7 +367,13 @@ const SUB_DESTS = [
 let db, participantsRef, throwRef, historyRef, enabledRef, phaseRef, roomSettingsRef;
 let enabled = PROVINCES.map(()=>true);
 let currentHighlight = -1, dartPos = null, animating = false;
-let myNick = '', myRoomId = '', myUserId = 'u_'+Math.random().toString(36).slice(2,10);
+let myNick = '', myRoomId = '';
+// sessionStorage로 userId 유지 (새로고침해도 동일 ID)
+let myUserId = sessionStorage.getItem('dartUserId');
+if (!myUserId) {
+  myUserId = 'u_'+Math.random().toString(36).slice(2,10);
+  sessionStorage.setItem('dartUserId', myUserId);
+}
 let isCreator = false, maxParticipants = 4;
 let lastThrowId = null, allThrows = {};
 
@@ -635,17 +641,20 @@ function showResultsOverlay() {
   document.getElementById('winner-name').textContent = winner.emoji+' '+winner.name;
   document.getElementById('winner-desc').textContent = winner.desc;
 
-  // 크리에이터만 결정 버튼
+  // 방장 여부 Firebase에서 확인
   const confirmBtn = document.getElementById('btn-confirm-province');
   const waitMsg    = document.getElementById('waiting-creator-msg');
-  if (isCreator) {
-    confirmBtn.style.display = 'block';
-    waitMsg.style.display    = 'none';
-    confirmBtn.dataset.idx   = winnerIdx;
-  } else {
-    confirmBtn.style.display = 'none';
-    waitMsg.style.display    = 'block';
-  }
+  db.ref(`rooms/${myRoomId}/settings/creatorId`).once('value').then(snap => {
+    const creatorId = snap.val();
+    if (creatorId === myUserId) {
+      confirmBtn.style.display = 'block';
+      waitMsg.style.display    = 'none';
+      confirmBtn.dataset.idx   = winnerIdx;
+    } else {
+      confirmBtn.style.display = 'none';
+      waitMsg.style.display    = 'block';
+    }
+  });
 }
 
 async function confirmProvince() {
@@ -653,14 +662,24 @@ async function confirmProvince() {
   await db.ref(`rooms/${myRoomId}/settings`).update({ selectedProvince: idx, phase: 'round2' });
 }
 
+// 방장 여부를 Firebase에서 직접 확인
+async function checkIsCreator() {
+  const snap = await db.ref(`rooms/${myRoomId}/settings/creatorId`).once('value');
+  isCreator = (snap.val() === myUserId);
+  return isCreator;
+}
+
 function onProvinceSelected(idx) {
   if (idx===null||idx===undefined) return;
   const p = PROVINCES[idx];
   document.getElementById('r2-from-label').textContent = p.emoji+' '+p.name+' 지역';
   renderSubSlot(idx, null);
-  // 2차 버튼: 크리에이터만 던질 수 있음
-  document.getElementById('btn-round2').disabled = !isCreator;
-  document.getElementById('btn-round2').title = isCreator ? '' : '방장만 던질 수 있어';
+  // 2차 버튼: Firebase creatorId로 방장 확인
+  db.ref(`rooms/${myRoomId}/settings/creatorId`).once('value').then(snap => {
+    const amCreator = (snap.val() === myUserId);
+    document.getElementById('btn-round2').disabled = !amCreator;
+    document.getElementById('btn-round2').title = amCreator ? '' : '방장만 던질 수 있어';
+  });
 }
 
 /* ══════════════════════════════════════
@@ -669,7 +688,6 @@ function onProvinceSelected(idx) {
 let slotInterval = null;
 
 function throwRound2() {
-  if (!isCreator) return;
   db.ref(`rooms/${myRoomId}/settings/selectedProvince`).once('value').then(snap => {
     const provinceIdx = snap.val();
     const subs = SUB_DESTS[provinceIdx];
